@@ -12,6 +12,6 @@ export class Genre {
     country: string;
     @Field()
     year: string;
-    @Field(() => [String], { nullable: true })
-    subGenresIds: string[];
+    @Field(() => [Genre], { nullable: true })
+    subGenresIds: Genre[];
 }

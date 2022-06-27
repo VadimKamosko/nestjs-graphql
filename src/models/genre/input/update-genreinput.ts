@@ -19,6 +19,6 @@ export class UpdateGenreInput {
     @IsNotEmpty()
     year: string;
     @IsOptional()
-    @Field(() => [String],{nullable:true})
-    subGenresIds: string[];
+    @Field(() => [UpdateGenreInput],{nullable:true})
+    subGenresIds: UpdateGenreInput[];
 }

@@ -15,6 +15,6 @@ export class CreateGenreInput {
   @Field()
   @IsNotEmpty()
   year: string;
-  @Field(() => [String], { nullable: true })
-  subGenresIds: string[];
+  @Field(() => [CreateGenreInput], { nullable: true })
+  subGenresIds: CreateGenreInput[];
 }

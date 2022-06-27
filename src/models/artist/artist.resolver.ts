@@ -1,4 +1,5 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import { Observable } from 'rxjs';
 import { ArtistService } from './artist.service';
 import { GetArtistArgs } from './DTO/get-artist.args';
 import { GetArtistsArgs } from './DTO/get-artists.args';
@@ -6,6 +7,7 @@ import { CreateArtistInput } from './imput/create-artist.input';
 import { DeleteArtistInput } from './imput/delete-artistinput';
 import { UpdateArtistinput } from './imput/update-artistinput';
 import { Artist } from './models/artist';
+import { AxiosResponse } from "axios";
 
 @Resolver()
 export class ArtistResolver {
@@ -17,7 +19,7 @@ export class ArtistResolver {
   }
 
   @Query(() => [Artist], { name: 'artists', nullable: 'items' })
-  getArtists(@Args()artistsid: GetArtistsArgs): Artist[] {
+  getArtists(@Args()artistsid: GetArtistsArgs): Promise<AxiosResponse<Artist[]>>{
     return this.artistServise.getArtists(artistsid);
   }
 

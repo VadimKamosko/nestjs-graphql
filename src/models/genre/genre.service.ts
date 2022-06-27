@@ -7,19 +7,34 @@ import { GetGenreArg } from './DTO/get-genre.args';
 import { GetGenresArg } from './DTO/get-genresargs';
 import { DeleteGenreInput } from './input/delete-genreinput';
 
-
 @Injectable()
 export class GenreService {
-    private genres: Genre[] = [];
+  private genres: Genre[] = [];
 
-  public createGenre(createArtist: CreateGenreInput): Genre {
+  public createGenre(createGenre: CreateGenreInput): Genre {
+    const subGenres = createGenre.subGenresIds.map((i) => {
+      if (!i.subGenresIds) return this.createSuBGenre(i);
+      return this.createGenre(i);
+    });
     const genre: Genre = {
       _id: uuidv4(),
-      ...createArtist,
+      ...createGenre,
+      subGenresIds: subGenres,
     };
     this.genres.push(genre);
     return genre;
   }
+
+  public createSuBGenre(subgenre: CreateGenreInput): Genre {
+    const genre: Genre = {
+      _id: uuidv4(),
+      ...subgenre,
+      subGenresIds: null,
+    };
+    this.genres.push(genre);
+    return genre;
+  }
+
   public updateGenre(updateGenre: UpdateGenreInput): Genre {
     const genre = this.genres.find((i) => i._id === updateGenre._id);
     Object.assign(genre, updateGenre);

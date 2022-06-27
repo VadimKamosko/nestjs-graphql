@@ -1,33 +1,32 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
-
 @ObjectType('Artist')
 @InputType('ArtInput')
 export class Artist {
   @Field(() => String, { nullable: false })
   _id: string;
-  @Field()
+  @Field({ nullable: true })
   firstName: string;
-  @Field()
+  @Field({ nullable: true })
   secondName: string;
-  @Field()
+  @Field({ nullable: true })
   middleName: string;
-  @Field()
+  @Field({ nullable: true })
   birthDate: string;
-  @Field()
+  @Field({ nullable: true })
   birthPlace: string;
   @Field({ nullable: true })
   deathDate?: string | null;
   @Field({ nullable: true })
   deathPlace?: string | null;
-  @Field()
+  @Field({ nullable: true })
   country: string;
   @Field(() => [String], { nullable: true })
   bandsIds?: string[];
   @Field(() => [String], { nullable: true })
-  instruments?: string[]
+  instruments?: string[];
   @Field(() => [String], { nullable: true })
-  pseudonims?: string[] ;
+  pseudonims?: string[];
   @Field(() => [String], { nullable: true })
   labels?: string[];
 }

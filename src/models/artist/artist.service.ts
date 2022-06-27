@@ -6,9 +6,12 @@ import { UpdateArtistinput } from './imput/update-artistinput';
 import { GetArtistArgs } from './DTO/get-artist.args';
 import { GetArtistsArgs } from './DTO/get-artists.args';
 import { DeleteArtistInput } from './imput/delete-artistinput';
+import { HttpService } from '@nestjs/axios';
+import { AxiosResponse } from "axios";
 
 @Injectable()
 export class ArtistService {
+  constructor(private readonly httpService: HttpService) {}
   private readonly artists: Artist[] = [];
 
   public createArtist(createArtist: CreateArtistInput): Artist {
@@ -27,8 +30,10 @@ export class ArtistService {
   public getArtist(getArtistArg: GetArtistArgs): Artist {
     return this.artists.find((i) => i._id === getArtistArg._id);
   }
-  public getArtists(getArtistsArgs: GetArtistsArgs): Artist[] {
-    return getArtistsArgs._id.map((i) => this.getArtist({ _id: i }));
+  public async getArtists(getArtistsArgs: GetArtistsArgs): Promise<AxiosResponse<Artist[]>> {
+   const data = await this.httpService.axiosRef.get('http://localhost:3002/v1/artists')
+  
+  return data.data.items;
   }
   public deleteArist(getArtistsArgs: DeleteArtistInput): Artist {
     const id = this.artists.findIndex((i) => i._id === getArtistsArgs._id);
