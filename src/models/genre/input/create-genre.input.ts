@@ -1,20 +1,17 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, Int } from '@nestjs/graphql';
 import { IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class CreateGenreInput {
-  @Field()
-  @IsNotEmpty()
+  @Field({ nullable: true })
   name: string;
-  @Field()
-  @IsNotEmpty()
+
+  @Field({ nullable: true })
   description: string;
-  @Field()
-  @IsNotEmpty()
+
+  @Field({ nullable: true })
   country: string;
-  @Field()
-  @IsNotEmpty()
-  year: string;
-  @Field(() => [CreateGenreInput], { nullable: true })
-  subGenresIds: CreateGenreInput[];
+
+  @Field(() => Int, { nullable: true })
+  year: number;
 }

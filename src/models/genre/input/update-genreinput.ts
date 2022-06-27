@@ -1,24 +1,20 @@
-import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { Field, InputType, Int } from '@nestjs/graphql';
+import { IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class UpdateGenreInput {
     @Field()
     @IsNotEmpty()
     _id: string;
-    @Field()
-    @IsNotEmpty()
+    @Field({ nullable: true })
     name: string;
-    @Field()
-    @IsNotEmpty()
+  
+    @Field({ nullable: true })
     description: string;
-    @Field()
-    @IsNotEmpty()
+  
+    @Field({ nullable: true })
     country: string;
-    @Field()
-    @IsNotEmpty()
-    year: string;
-    @IsOptional()
-    @Field(() => [UpdateGenreInput],{nullable:true})
-    subGenresIds: UpdateGenreInput[];
+  
+    @Field(() => Int, { nullable: true })
+    year: number;
 }

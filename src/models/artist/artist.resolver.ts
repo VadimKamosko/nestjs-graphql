@@ -29,12 +29,12 @@ export class ArtistResolver {
   }
 
   @Mutation(()=>Artist)
-  updateArtist(@Args(('updateArtist'))update:UpdateArtistinput):Artist{
+  updateArtist(@Args(('updateArtist'))update:UpdateArtistinput):Promise<AxiosResponse<Artist>>{
     return this.artistServise.updateArtist(update)
   }
 
   @Mutation(()=>Artist)
-  removeArtist(@Args(('deleteArtist'))deleteId:DeleteArtistInput):Artist{
+  removeArtist(@Args(('deleteArtist'))deleteId:DeleteArtistInput):Promise<DeleteArtistInput>{
     return this.artistServise.deleteArist(deleteId)
   }
 }

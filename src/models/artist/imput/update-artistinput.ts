@@ -25,7 +25,7 @@ export class UpdateArtistinput {
   @IsNotEmpty()
   country: string;
   @Field(() => [String], { nullable: true })
-  bandsIds: string[] | [];
+  bands: string[] | [];
   @Field(() => [String], { nullable: true })
   instruments: string[];
 }

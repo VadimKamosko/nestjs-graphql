@@ -1,17 +1,17 @@
-import { Field, ObjectType } from "@nestjs/graphql";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { IsNotEmpty } from 'class-validator';
 
 @ObjectType()
 export class Genre {
-    @Field()
-    _id: string;
-    @Field()
-    name: string;
-    @Field()
-    description: string;
-    @Field()
-    country: string;
-    @Field()
-    year: string;
-    @Field(() => [Genre], { nullable: true })
-    subGenresIds: Genre[];
+  @Field()
+  @IsNotEmpty()
+  _id: string;
+  @Field({ nullable: true })
+  name: string;
+  @Field({ nullable: true })
+  description: string;
+  @Field({ nullable: true })
+  country: string;
+  @Field(() => Int)
+  year: number;
 }

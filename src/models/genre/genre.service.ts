@@ -1,55 +1,77 @@
 import { Injectable } from '@nestjs/common';
 import { Genre } from './models/genre';
-import { v4 as uuidv4 } from 'uuid';
 import { CreateGenreInput } from './input/create-genre.input';
 import { UpdateGenreInput } from './input/update-genreinput';
 import { GetGenreArg } from './DTO/get-genre.args';
 import { GetGenresArg } from './DTO/get-genresargs';
 import { DeleteGenreInput } from './input/delete-genreinput';
+import { AxiosResponse } from 'axios';
+import { HttpService } from '@nestjs/axios';
 
 @Injectable()
 export class GenreService {
+  constructor(private readonly httpService: HttpService) {}
   private genres: Genre[] = [];
 
-  public createGenre(createGenre: CreateGenreInput): Genre {
-    const subGenres = createGenre.subGenresIds.map((i) => {
-      if (!i.subGenresIds) return this.createSuBGenre(i);
-      return this.createGenre(i);
-    });
-    const genre: Genre = {
-      _id: uuidv4(),
-      ...createGenre,
-      subGenresIds: subGenres,
-    };
-    this.genres.push(genre);
-    return genre;
+  public async createGenre(
+    createGenre: CreateGenreInput,
+  ): Promise<AxiosResponse<Genre>> {
+    const data = await this.httpService.axiosRef.post(
+      'http://localhost:3001/v1/genres',
+      createGenre,
+      {
+        headers: {
+          Authorization: `Token ${process.env.token}`,
+        },
+      },
+    );
+
+    return data.data;
   }
 
-  public createSuBGenre(subgenre: CreateGenreInput): Genre {
-    const genre: Genre = {
-      _id: uuidv4(),
-      ...subgenre,
-      subGenresIds: null,
-    };
-    this.genres.push(genre);
-    return genre;
-  }
+  public async updateGenre(
+    updateGenre: UpdateGenreInput,
+  ): Promise<AxiosResponse<Genre>> {
+    const data = await this.httpService.axiosRef.put(
+      'http://localhost:3001/v1/genres/' + updateGenre._id,
+      updateGenre,
+      {
+        headers: {
+          Authorization: `Token ${process.env.token}`,
+        },
+      },
+    );
 
-  public updateGenre(updateGenre: UpdateGenreInput): Genre {
-    const genre = this.genres.find((i) => i._id === updateGenre._id);
-    Object.assign(genre, updateGenre);
-    return genre;
+    return data.data;
   }
-  public getGenre(getGenretArg: GetGenreArg): Genre {
-    return this.genres.find((i) => i._id === getGenretArg._id);
+  public async getGenre(
+    getGenretArg: GetGenreArg,
+  ): Promise<AxiosResponse<Genre>> {
+    const data = await this.httpService.axiosRef.get(
+      'http://localhost:3001/v1/genres/' + getGenretArg._id,
+    );
+
+    return data.data;
   }
-  public getGenres(getGenretArg: GetGenresArg): Genre[] {
-    return getGenretArg._id.map((i) => this.getGenre({ _id: i }));
+  public async getGenres(
+    getGenretArg: GetGenresArg,
+  ): Promise<AxiosResponse<Genre[]>> {
+    const data = await this.httpService.axiosRef.get(
+      'http://localhost:3001/v1/genres',
+    );
+
+    return data.data.items;
   }
-  public deleteGenre(getGenretArg: DeleteGenreInput): Genre {
-    const id = this.genres.findIndex((i) => i._id === getGenretArg._id);
-    const genre = this.genres[id];
-    this.genres.splice(id, 1);
-    return genre;
+  public async deleteGenre(getGenretArg: DeleteGenreInput): Promise<DeleteGenreInput> {
+    const data = await this.httpService.axiosRef.delete(
+      'http://localhost:3001/v1/genres/' + getGenretArg._id,
+      {
+        headers: {
+          Authorization: `Token ${process.env.token}`,
+        },
+      },
+    );
+
+    return getGenretArg;
   }
 }
