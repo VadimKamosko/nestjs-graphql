@@ -14,21 +14,36 @@ export class ArtistService {
   constructor(private readonly httpService: HttpService) {}
   private readonly artists: Artist[] = [];
 
-  public createArtist(createArtist: CreateArtistInput): Artist {
-    const artist: Artist = {
-      _id: uuidv4(),
-      ...createArtist,
-    };
-    this.artists.push(artist);
-    return artist;
+  public async createArtist(createArtist: CreateArtistInput):Promise<AxiosResponse<Artist>> {
+    // const artist: Artist = {
+    //   _id: uuidv4(),
+    //   ...createArtist,
+    // };
+    // this.artists.push(artist);
+    // return artist;
+    
+
+    const data = await this.httpService.axiosRef.post(
+      'http://localhost:3002/v1/artists',
+      createArtist,
+      {
+        headers:{
+          "Authorization":`Token ${process.env.token}`
+        }
+      }
+    );    
+    
+    return data.data;
   }
   public updateArtist(updateArt: UpdateArtistinput): Artist {
     const artist = this.artists.find((i) => i._id === updateArt._id);
     Object.assign(artist, updateArt);
     return artist;
   }
-  public getArtist(getArtistArg: GetArtistArgs): Artist {
-    return this.artists.find((i) => i._id === getArtistArg._id);
+  public async getArtist(getArtistArg: GetArtistArgs):Promise<AxiosResponse<Artist>> {
+    const data = await this.httpService.axiosRef.get('http://localhost:3002/v1/artists/'+getArtistArg._id)
+    
+    return data.data;
   }
   public async getArtists(getArtistsArgs: GetArtistsArgs): Promise<AxiosResponse<Artist[]>> {
    const data = await this.httpService.axiosRef.get('http://localhost:3002/v1/artists')

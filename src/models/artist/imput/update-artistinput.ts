@@ -6,38 +6,26 @@ export class UpdateArtistinput {
   @Field()
   @IsNotEmpty()
   _id: string;
-  @Field()
+  @Field({ nullable: true })
   @IsNotEmpty()
   firstName: string;
-  @Field()
+  @Field({ nullable: true })
   @IsNotEmpty()
   secondName: string;
-  @Field()
+  @Field({ nullable: true })
   @IsNotEmpty()
   middleName: string;
-  @Field()
+  @Field({ nullable: true })
   @IsNotEmpty()
   birthDate: string;
-  @Field()
+  @Field({ nullable: true })
   @IsNotEmpty()
   birthPlace: string;
-  @Field({nullable:true})
-  deathDate: string ;
-  @Field({nullable:true})
-  deathPlace: string;
-  @Field()
+  @Field({ nullable: true })
   @IsNotEmpty()
   country: string;
-  @IsOptional()
-  @Field(() => [String],{nullable:true})
-  bandsIds?: string[];
-  @IsOptional()
-  @Field(() => [String],{nullable:true})
-  instruments?: string;
-  @IsOptional()
-  @Field(() => [String],{nullable:true})
-  pseudonims?: string;
-  @IsOptional()
-  @Field(() => [String],{nullable:true})
-  labels?: string ;
+  @Field(() => [String], { nullable: true })
+  bandsIds: string[] | [];
+  @Field(() => [String], { nullable: true })
+  instruments: string[];
 }

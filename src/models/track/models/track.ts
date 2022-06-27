@@ -1,35 +1,25 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { Artist } from "src/models/artist/models/artist";
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class Track{
-        @Field()
-        _id: string;
+export class Track {
+  @Field()
+  _id: string;
 
-        @Field(() => [Artist], { nullable: true })
-        artists!: Artist[];
+  @Field()
+  title: string;
 
-        @Field(() => [String], { nullable: true })
-        bands: string[];
+  @Field()
+  albums: string;
 
-        @Field()
-        year: number;
-        
-        @Field()
-        albumId: string;
+  @Field(() => [String])
+  bands: string[];
 
-        @Field()
-        name: string;
+  @Field(()=>Int)
+  duration: number;
 
-        @Field()
-        description: string;
+  @Field(()=>Int)
+  released: number;
 
-        @Field()
-        lyrics: string;
-
-        @Field()
-        length: number;
-
-        @Field()
-        authorsIds: number; 
+  @Field(() => [String])
+  genre: string[];
 }

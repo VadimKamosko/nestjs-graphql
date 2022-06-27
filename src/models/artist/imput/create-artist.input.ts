@@ -1,36 +1,21 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class CreateArtistInput {
-  @Field()
-  @IsNotEmpty()
+  @Field({ nullable: true })
   firstName: string;
-  @Field()
-  @IsNotEmpty()
+  @Field({ nullable: true })
   secondName: string;
-  @Field()
-  @IsNotEmpty()
+  @Field({ nullable: true })
   middleName: string;
-  @Field()
-  @IsNotEmpty()
+  @Field({ nullable: true })
   birthDate: string;
-  @Field()
-  @IsNotEmpty()
+  @Field({ nullable: true })
   birthPlace: string;
   @Field({ nullable: true })
-  deathDate: string;
-  @Field({ nullable: true })
-  deathPlace: string;
-  @Field()
-  @IsNotEmpty()
   country: string;
   @Field(() => [String], { nullable: true })
-  bandsIds: string[] | [];
+  bands: string[];
   @Field(() => [String], { nullable: true })
-  instruments: string[] | [];
-  @Field(() => [String], { nullable: true })
-  pseudonims: string[] | [];
-  @Field(() => [String], { nullable: true })
-  labels: string[] | [];
+  instruments: string[];
 }

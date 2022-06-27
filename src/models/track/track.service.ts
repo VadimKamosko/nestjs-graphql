@@ -21,14 +21,10 @@ export class TrackService {
     return tracks._id.map((i) => this.getTrack({ _id: i }));
   }
   createTrack(bodyTrack: CreateTrackInput) {
-    const artists: Artist[] = bodyTrack.artists.map((i) =>
-      this.artSer.createArtist(i),
-    );
 
     let track: Track = {
       _id: uuidv4(),
       ...bodyTrack,
-      artists: artists,
     };
 
     this.tracks.push(track);

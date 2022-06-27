@@ -17,11 +17,12 @@ export class UserService {
 
     return data.data;
   }
-  async getJWT(bodyLog:GetJWT) : Promise<AxiosResponse<String>>{
+  async getJWT(bodyLog: GetJWT): Promise<AxiosResponse<String>> {
     const data = await this.httpService.axiosRef.post(
       'http://localhost:3004/v1/users/login',
       bodyLog,
-    );    
+    );
+    process.env.token = data.data.jwt;    
     return data.data.jwt;
   }
 }

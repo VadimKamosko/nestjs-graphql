@@ -14,7 +14,7 @@ export class ArtistResolver {
   constructor(private readonly artistServise: ArtistService) {}
 
   @Query(() => Artist, { name: 'artist', nullable: true })
-  getArtist(@Args() artistid: GetArtistArgs): Artist {
+  getArtist(@Args() artistid: GetArtistArgs): Promise<AxiosResponse<Artist>> {
     return this.artistServise.getArtist(artistid);
   }
 
@@ -24,7 +24,7 @@ export class ArtistResolver {
   }
 
   @Mutation(()=>Artist)
-  createArtist(@Args(('createArtist'))createArtistdate:CreateArtistInput):Artist{
+  createArtist(@Args(('createArtist'))createArtistdate:CreateArtistInput):Promise<AxiosResponse<Artist>>{
     return this.artistServise.createArtist(createArtistdate)
   }
 
