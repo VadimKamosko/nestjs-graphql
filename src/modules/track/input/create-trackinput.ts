@@ -1,7 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { CreateInputBand } from 'src/models/band/imput/create-bandinput';
-import { CreateGenreInput } from 'src/models/genre/input/create-genre.input';
-import { Genre } from 'src/models/genre/models/genre';
+import { CreateInputBand } from 'src/modules/band/imput/create-bandinput';
+import { CreateGenreInput } from 'src/modules/genre/input/create-genre.input';
 
 @InputType()
 export class CreateTrackInput {

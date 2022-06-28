@@ -2,12 +2,12 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ArtistModule } from './models/artist/artist.module';
-import { GenreModule } from './models/genre/genre.module';
-import { TrackModule } from './models/track/track.module';
+import { ArtistModule } from './modules/artist/artist.module';
+import { GenreModule } from './modules/genre/genre.module';
+import { TrackModule } from './modules/track/track.module';
 import { UserModule } from './user/user.module';
-import { BandModule } from './models/band/band.module';
-import { FavouriteModule } from './models/favourite/favourite.module';
+import { BandModule } from './modules/band/band.module';
+import { FavouriteModule } from './modules/favourite/favourite.module';
 
 @Module({
   imports: [

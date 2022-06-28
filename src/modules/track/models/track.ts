@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Band } from 'src/models/band/models/band';
-import { Genre } from 'src/models/genre/models/genre';
+import { Band } from 'src/modules/band/models/band';
+import { Genre } from 'src/modules/genre/models/genre';
 
 @ObjectType()
 export class Track {
