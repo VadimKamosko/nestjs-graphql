@@ -1,17 +1,18 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { IsNotEmpty } from 'class-validator';
-import { CreateArtistInput } from 'src/models/artist/imput/create-artist.input';
+import { CreateInputBand } from 'src/models/band/imput/create-bandinput';
+import { CreateGenreInput } from 'src/models/genre/input/create-genre.input';
+import { Genre } from 'src/models/genre/models/genre';
 
 @InputType()
 export class CreateTrackInput {
-  @Field()
+  @Field({ nullable: true })
   title: string;
 
-  @Field()
-  albums: string;
+  @Field({ nullable: true })
+  albumId: string;
 
-  @Field(() => [String])
-  bands: string[];
+  @Field(() => [CreateInputBand], { nullable: true })
+  bands: CreateInputBand[];
 
   @Field(() => Int)
   duration: number;
@@ -19,6 +20,6 @@ export class CreateTrackInput {
   @Field(() => Int)
   released: number;
 
-  @Field(() => [String])
-  genre: string[];
+  @Field(() => [CreateGenreInput],{nullable:true})
+  genre: CreateGenreInput[];
 }

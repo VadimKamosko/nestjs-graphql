@@ -15,7 +15,7 @@ export class GenreService {
 
   public async createGenre(
     createGenre: CreateGenreInput,
-  ): Promise<AxiosResponse<Genre>> {
+  ): Promise<Genre> {
     const data = await this.httpService.axiosRef.post(
       'http://localhost:3001/v1/genres',
       createGenre,
@@ -31,7 +31,7 @@ export class GenreService {
 
   public async updateGenre(
     updateGenre: UpdateGenreInput,
-  ): Promise<AxiosResponse<Genre>> {
+  ): Promise<Genre> {
     const data = await this.httpService.axiosRef.put(
       'http://localhost:3001/v1/genres/' + updateGenre._id,
       updateGenre,
@@ -46,11 +46,11 @@ export class GenreService {
   }
   public async getGenre(
     getGenretArg: GetGenreArg,
-  ): Promise<AxiosResponse<Genre>> {
+  ): Promise<AxiosResponse<Genre>> {            
     const data = await this.httpService.axiosRef.get(
       'http://localhost:3001/v1/genres/' + getGenretArg._id,
     );
-
+      
     return data.data;
   }
   public async getGenres(

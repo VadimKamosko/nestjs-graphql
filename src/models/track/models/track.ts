@@ -1,18 +1,20 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Band } from 'src/models/band/models/band';
+import { Genre } from 'src/models/genre/models/genre';
 
 @ObjectType()
 export class Track {
   @Field()
   _id: string;
 
-  @Field()
+  @Field({nullable:true})
   title: string;
 
-  @Field()
-  albums: string;
+  @Field({nullable:true})
+  albumId: string;
 
-  @Field(() => [String])
-  bands: string[];
+  @Field(() => [Band],{nullable:true})
+  bands: Band[];
 
   @Field(()=>Int)
   duration: number;
@@ -20,6 +22,6 @@ export class Track {
   @Field(()=>Int)
   released: number;
 
-  @Field(() => [String])
-  genre: string[];
+  @Field(() => [Genre],{nullable:"items"})
+  genre: Genre[];
 }

@@ -6,6 +6,8 @@ import { ArtistModule } from './models/artist/artist.module';
 import { GenreModule } from './models/genre/genre.module';
 import { TrackModule } from './models/track/track.module';
 import { UserModule } from './user/user.module';
+import { BandModule } from './models/band/band.module';
+import { FavouriteModule } from './models/favourite/favourite.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { UserModule } from './user/user.module';
     GenreModule,
     TrackModule,
     UserModule,
+    BandModule,
+    FavouriteModule,
   ],
   controllers: [],
   providers: [],

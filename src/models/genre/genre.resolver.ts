@@ -23,12 +23,12 @@ export class GenreResolver {
     }
   
     @Mutation(()=>Genre)
-    createGenre(@Args(('createGenre'))createGenredate:CreateGenreInput):Promise<AxiosResponse<Genre>>{
+    createGenre(@Args(('createGenre'))createGenredate:CreateGenreInput):Promise<Genre>{
       return this.genreServise.createGenre(createGenredate)
     }
   
     @Mutation(()=>Genre)
-    updateGenre(@Args(('updateGenre'))update:UpdateGenreInput):Promise<AxiosResponse<Genre>>{
+    updateGenre(@Args(('updateGenre'))update:UpdateGenreInput):Promise<Genre>{
       return this.genreServise.updateGenre(update)
     }
   

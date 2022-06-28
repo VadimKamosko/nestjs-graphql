@@ -12,6 +12,6 @@ export class Genre {
   description: string;
   @Field({ nullable: true })
   country: string;
-  @Field(() => Int)
+  @Field(() => Int,{ nullable: true })
   year: number;
 }
