@@ -8,6 +8,7 @@ import { TrackModule } from './modules/track/track.module';
 import { UserModule } from './user/user.module';
 import { BandModule } from './modules/band/band.module';
 import { FavouriteModule } from './modules/favourite/favourite.module';
+import { AlbumModule } from './modules/album/album.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { FavouriteModule } from './modules/favourite/favourite.module';
     UserModule,
     BandModule,
     FavouriteModule,
+    AlbumModule,
   ],
   controllers: [],
   providers: [],
