@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateArtistInput } from './imput/create-artist.input';
+import { CreateArtistInput } from './input/create-artist.input';
 import { Artist } from './models/artist';
-import { UpdateArtistinput } from './imput/update-artistinput';
+import { UpdateArtistinput } from './input/update-artistinput';
 import { GetArtistArgs } from './DTO/get-artist.args';
 import { GetArtistsArgs } from './DTO/get-artists.args';
-import { DeleteArtistInput } from './imput/delete-artistinput';
+import { DeleteArtistInput } from './input/delete-artistinput';
 import { HttpService } from '@nestjs/axios';
 import { AxiosResponse } from 'axios';
 

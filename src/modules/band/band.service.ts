@@ -1,9 +1,9 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { GetBandArg } from './DTO/get-bandarg';
-import { CreateInputBand } from './imput/create-bandinput';
-import { DeleteBandInput } from './imput/delete-bandinput';
-import { UpdateInputBand } from './imput/update-bandinput';
+import { CreateInputBand } from './input/create-bandinput';
+import { DeleteBandInput } from './input/delete-bandinput';
+import { UpdateInputBand } from './input/update-bandinput';
 import { Band } from './models/band';
 
 @Injectable()

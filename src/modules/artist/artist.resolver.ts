@@ -3,9 +3,9 @@ import { Observable } from 'rxjs';
 import { ArtistService } from './artist.service';
 import { GetArtistArgs } from './DTO/get-artist.args';
 import { GetArtistsArgs } from './DTO/get-artists.args';
-import { CreateArtistInput } from './imput/create-artist.input';
-import { DeleteArtistInput } from './imput/delete-artistinput';
-import { UpdateArtistinput } from './imput/update-artistinput';
+import { CreateArtistInput } from './input/create-artist.input';
+import { DeleteArtistInput } from './input/delete-artistinput';
+import { UpdateArtistinput } from './input/update-artistinput';
 import { Artist } from './models/artist';
 import { AxiosResponse } from "axios";
 

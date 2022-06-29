@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { UpdateInputBand } from 'src/modules/band/imput/update-bandinput';
+import { UpdateInputBand } from 'src/modules/band/input/update-bandinput';
 import { UpdateGenreInput } from 'src/modules/genre/input/update-genreinput';
 
 

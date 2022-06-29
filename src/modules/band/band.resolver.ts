@@ -1,9 +1,9 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { BandService } from './band.service';
 import { GetBandArg } from './DTO/get-bandarg';
-import { CreateInputBand } from './imput/create-bandinput';
-import { DeleteBandInput } from './imput/delete-bandinput';
-import { UpdateInputBand } from './imput/update-bandinput';
+import { CreateInputBand } from './input/create-bandinput';
+import { DeleteBandInput } from './input/delete-bandinput';
+import { UpdateInputBand } from './input/update-bandinput';
 import { Band } from './models/band';
 
 @Resolver()

@@ -1,10 +1,10 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { FavouriteService } from './favourite.service';
-import { CreateInputTracktofav } from './imputs/create-inputaddtrack';
-import { CreateInputArtisttofav } from './imputs/create-inputartisttofav';
+import { CreateInputTracktofav } from './inputs/create-inputaddtrack';
+import { CreateInputArtisttofav } from './inputs/create-inputartisttofav';
 
-import { CreateInputGenretofav } from './imputs/create-inputgenretofav';
-import { CreateInputBandtofav } from './imputs/crete-inputbandtofav';
+import { CreateInputGenretofav } from './inputs/create-inputgenretofav';
+import { CreateInputBandtofav } from './inputs/crete-inputbandtofav';
 import { Favourite } from './models/favourite';
 
 @Resolver()
