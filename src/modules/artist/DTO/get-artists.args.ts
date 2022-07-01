@@ -5,5 +5,5 @@ import { IsArray } from 'class-validator';
 export class GetArtistsArgs {
   @Field(() => [String])
   @IsArray()
-  _id: string[];
+  id: string[];
 }

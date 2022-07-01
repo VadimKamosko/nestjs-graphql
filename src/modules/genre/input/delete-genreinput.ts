@@ -5,6 +5,6 @@ import { IsNotEmpty } from "class-validator";
 export class DeleteGenreInput{
     @Field()
     @IsNotEmpty()
-    _id:string
+    id:string
 
 }

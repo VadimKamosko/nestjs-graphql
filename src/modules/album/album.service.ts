@@ -25,14 +25,9 @@ export class AlbumService {
 
   async getAlbum(id) {
     const data = await this.httpServise.axiosRef.get(
-      'http://localhost:3005/v1/albums/' + id._id,
+      'http://localhost:3005/v1/albums/' + id.id,
     );
     const props = await this.getByids(data.data);
-
-    delete data.data['artistsIds'];
-    delete data.data['bandsIds'];
-    delete data.data['genresIds'];
-    delete data.data['trackIds'];
 
     return { ...data.data, ...props };
   }
@@ -44,10 +39,6 @@ export class AlbumService {
     const ans = await Promise.all(
       data.data.items.map(async (item) => {
         const props = await this.getByids(item);
-        delete item['artistsIds'];
-        delete item['bandsIds'];
-        delete item['genresIds'];
-        delete item['trackIds'];
 
         return {
           ...item,
@@ -55,6 +46,7 @@ export class AlbumService {
         };
       }),
     );
+
     return ans;
   }
 
@@ -71,14 +63,14 @@ export class AlbumService {
       },
     );
 
-    return this.getAlbum({ _id: data.data._id });
+    return this.getAlbum({ id: data.data._id });
   }
 
   async updateAlbum(album: UpdateInputAlbum) {
     const albumRen = await this.renameField(album);
 
     const data = await this.httpServise.axiosRef.put(
-      'http://localhost:3005/v1/albums/' + album._id,
+      'http://localhost:3005/v1/albums/' + album.id,
       albumRen,
       {
         headers: {
@@ -87,12 +79,12 @@ export class AlbumService {
       },
     );
 
-    return this.getAlbum({ _id: data.data._id });
+    return this.getAlbum({ id: data.data._id });
   }
 
-  async deleteAlbum(id:DeleteAlbumInput):Promise<DeleteAlbumInput> {
+  async deleteAlbum(id: DeleteAlbumInput): Promise<DeleteAlbumInput> {
     const data = await this.httpServise.axiosRef.delete(
-      'http://localhost:3005/v1/albums/' + id._id,
+      'http://localhost:3005/v1/albums/' + id.id,
       {
         headers: {
           Authorization: `Token ${process.env.token}`,
@@ -111,7 +103,7 @@ export class AlbumService {
       artists = await Promise.all(
         data.artistsIds.map(
           async (i) =>
-            (await this.artServ.getArtist({ _id: i })) || { _id: 'not found' },
+            (await this.artServ.getArtist({ id: i })) || { id: 'not found' },
         ),
       );
     }
@@ -119,8 +111,8 @@ export class AlbumService {
       bands = await Promise.all(
         data.bandsIds.map(
           async (i) =>
-            (await this.bandServise.getBand({ _id: i })) || {
-              _id: 'not found',
+            (await this.bandServise.getBand({ id: i })) || {
+              id: 'not found',
             },
         ),
       );
@@ -129,8 +121,8 @@ export class AlbumService {
       genres = await Promise.all(
         data.genresIds.map(
           async (i) =>
-            (await this.genreServise.getGenre({ _id: i })) || {
-              _id: 'not found',
+            (await this.genreServise.getGenre({ id: i })) || {
+              id: 'not found',
             },
         ),
       );
@@ -139,12 +131,18 @@ export class AlbumService {
       tracks = await Promise.all(
         data.trackIds.map(
           async (i) =>
-            (await this.trackServise.getTrack({ _id: i })) || {
-              _id: 'not found',
+            (await this.trackServise.getTrack({ id: i })) || {
+              id: 'not found',
             },
         ),
       );
     }
+    data.id = data._id;
+    delete data['_id'];
+    delete data['artistsIds'];
+    delete data['bandsIds'];
+    delete data['genresIds'];
+    delete data['trackIds'];
     return { genres, bands, artists, tracks };
   }
   async renameField(Obj) {

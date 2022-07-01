@@ -1,5 +1,6 @@
 import { Field, ObjectType } from "@nestjs/graphql";
 import { IsNotEmpty } from "class-validator";
+import { Genre } from "src/modules/genre/models/genre";
 import { Member } from "./member";
 
 
@@ -8,7 +9,7 @@ export class Band
 {
     @Field()
     @IsNotEmpty()
-    _id:string
+    id:string
     @Field({nullable:true})
     name:string
     @Field({nullable:true})
@@ -17,7 +18,7 @@ export class Band
     members:Member[]
     @Field({nullable:true})
     website:string
-    @Field(()=>[String],{nullable:"items"})
-    genresIds:string[]
+    @Field(()=>[Genre],{nullable:"items"})
+    genres:Genre[]
 }
 

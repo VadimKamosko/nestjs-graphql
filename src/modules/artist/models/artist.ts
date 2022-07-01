@@ -1,10 +1,10 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Band } from 'src/modules/band/models/band';
 
 @ObjectType('Artist')
-@InputType('ArtInput')
 export class Artist {
   @Field(() => String, { nullable: false })
-  _id: string;
+  id: string;
   @Field({ nullable: true })
   firstName: string;
   @Field({ nullable: true })
@@ -17,8 +17,8 @@ export class Artist {
   birthPlace: string;
   @Field({ nullable: true })
   country: string;
-  @Field(() => [String], { nullable: true })
-  bands: string[];
+  @Field(() => [Band], { nullable: true })
+  bands: Band[];
   @Field(() => [String], { nullable: true })
   instruments: string[];
 }

@@ -1,6 +1,4 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { CreateInputBand } from 'src/modules/band/input/create-bandinput';
-import { CreateGenreInput } from 'src/modules/genre/input/create-genre.input';
 
 @InputType()
 export class CreateTrackInput {
@@ -10,8 +8,8 @@ export class CreateTrackInput {
   @Field({ nullable: true })
   albumId: string;
 
-  @Field(() => [CreateInputBand], { nullable: true })
-  bands: CreateInputBand[];
+  @Field(() => [String], { nullable: true })
+  bands: string[];
 
   @Field(() => Int)
   duration: number;
@@ -19,6 +17,6 @@ export class CreateTrackInput {
   @Field(() => Int)
   released: number;
 
-  @Field(() => [CreateGenreInput],{nullable:true})
-  genre: CreateGenreInput[];
+  @Field(() => [String],{nullable:true})
+  genres: string[];
 }

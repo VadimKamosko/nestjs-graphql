@@ -5,7 +5,7 @@ import { IsNotEmpty } from 'class-validator';
 export class UpdateGenreInput {
     @Field()
     @IsNotEmpty()
-    _id: string;
+    id: string;
     @Field({ nullable: true })
     name: string;
   

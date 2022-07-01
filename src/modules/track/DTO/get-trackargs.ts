@@ -5,6 +5,6 @@ import { IsNotEmpty } from "class-validator";
 export class GetTrackArg{
     @Field()
     @IsNotEmpty()
-    _id:string
+    id:string
 
 }

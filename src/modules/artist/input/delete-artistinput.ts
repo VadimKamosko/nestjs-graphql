@@ -5,6 +5,6 @@ import { IsNotEmpty } from "class-validator";
 export class DeleteArtistInput{
     @Field()
     @IsNotEmpty()
-    _id:string
+    id:string
 
 }

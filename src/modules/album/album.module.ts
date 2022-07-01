@@ -15,7 +15,8 @@ import { TrackService } from '../track/track.service';
     ArtistService,
     BandService,
     GenreService,
-    TrackService
+    TrackService,
   ],
+  exports: [AlbumService],
 })
 export class AlbumModule {}

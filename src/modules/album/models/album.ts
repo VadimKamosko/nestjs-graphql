@@ -7,7 +7,7 @@ import { Track } from 'src/modules/track/models/track';
 @ObjectType()
 export class Album {
   @Field()
-  _id: string;
+  id: string;
   @Field({ nullable: true })
   name: String;
   @Field(() => Int, { nullable: true })

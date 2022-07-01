@@ -7,7 +7,7 @@ export class UpdateInputBand
 {
     @Field()
     @IsNotEmpty()
-    _id:string
+    id:string
     @Field({ nullable: true })
     name:string
     @Field({ nullable: true })
@@ -17,5 +17,5 @@ export class UpdateInputBand
     @Field({ nullable: true })
     website:string
     @Field(()=>[String],{ nullable: true })
-    genresIds:string[]
+    genres:string[]
 }

@@ -3,7 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class Favourite {
   @Field()
-  _id: string;
+  id: string;
   @Field()
   userId: string;
   @Field(()=>[String],{ nullable: true })

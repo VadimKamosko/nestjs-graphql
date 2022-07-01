@@ -14,7 +14,8 @@ export class UserService {
       'http://localhost:3004/v1/users/register',
       bodyUser,
     );
-
+    data.data.id = data.data._id
+    delete data.data._id
     return data.data;
   }
   async getJWT(bodyLog: GetJWT): Promise<AxiosResponse<String>> {

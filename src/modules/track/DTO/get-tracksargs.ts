@@ -5,5 +5,5 @@ import { IsArray } from 'class-validator';
 export class GetTracksArg {
   @Field(() => [String])
   @IsArray()
-  _id: string[];
+  id: string[];
 }

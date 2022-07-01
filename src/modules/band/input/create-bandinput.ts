@@ -12,5 +12,5 @@ export class CreateInputBand {
   @Field({ nullable: true })
   website: string;
   @Field(() => [String], { nullable: true })
-  genresIds: string[];
+  genres: string[];
 }

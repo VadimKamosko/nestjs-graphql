@@ -5,7 +5,7 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 export class UpdateArtistinput {
   @Field()
   @IsNotEmpty()
-  _id: string;
+  id: string;
   @Field({ nullable: true })
   @IsNotEmpty()
   firstName: string;

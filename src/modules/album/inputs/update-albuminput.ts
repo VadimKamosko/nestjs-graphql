@@ -3,7 +3,7 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 @InputType()
 export class UpdateInputAlbum {
   @Field()
-  _id: string;
+  id: string;
   @Field({ nullable: true })
   name: String;
   @Field(() => Int, { nullable: true })

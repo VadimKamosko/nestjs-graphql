@@ -77,7 +77,7 @@ export class FavouriteService {
 
   changeObj(obj) {
     return {
-      _id: obj._id,
+      id: obj._id,
       bands: obj.bandsIds,
       artists: obj.artistsIds,
       genres: obj.genresIds,

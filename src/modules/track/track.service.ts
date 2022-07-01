@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { GetTrackArg } from './DTO/get-trackargs';
 import { GetTracksArg } from './DTO/get-tracksargs';
 import { CreateTrackInput } from './input/create-trackinput';
@@ -7,51 +7,32 @@ import { UpdateTrackInput } from './input/update-trackinput';
 import { DeleteTrackInput } from './input/delete-trackinput';
 import { HttpService } from '@nestjs/axios';
 import { BandService } from '../band/band.service';
-import { GenreService } from '../genre/genre.service';
 import { Band } from '../band/models/band';
 import { Genre } from '../genre/models/genre';
+import { GenreService } from '../genre/genre.service';
+import { Album } from '../album/models/album';
+import { AlbumService } from '../album/album.service';
 
 @Injectable()
 export class TrackService {
   constructor(
     private readonly httpServise: HttpService,
     private readonly bandService: BandService,
-    private readonly genreService: GenreService,
+    private readonly genresService: GenreService,
+    //private readonly albService: AlbumService
   ) {}
+  private albService: AlbumService;
   private tracks: Track[] = [];
 
   async getTrack(id: GetTrackArg): Promise<Track> {
     const data = await this.httpServise.axiosRef.get(
-      'http://localhost:3006/v1/tracks/' + id._id,
+      'http://localhost:3006/v1/tracks/' + id.id,
     );
 
     if (!data.data) return null;
-    const genre = await Promise.all(
-      data.data.genresIds.map(async (i) => {
-        if (typeof i === 'string')
-          return (
-            (await this.genreService.getGenre({ _id: i })) || {
-              _id: 'deleted',
-            }
-          );
-        else return [];
-      }),
-    );
+    const props = await this.getdataById(data.data);
 
-    const band = await Promise.all(
-      data.data.bandsIds.map(async (i) => {
-        if (typeof i === 'string')
-          return (
-            (await this.bandService.getBand({ _id: i })) || { _id: 'deleted' }
-          );
-        else return [];
-      }),
-    );
-
-    data.data['genre'] = genre;
-    data.data['bands'] = band;
-
-    return data.data;
+    return { ...data.data, ...props };
   }
 
   async getTracks(tracks: GetTracksArg): Promise<Track[]> {
@@ -59,66 +40,25 @@ export class TrackService {
       'http://localhost:3006/v1/tracks',
     );
 
-    const ansTrack = await Promise.all(
-      data.data.items.map(async (i) => {
-        const genre = await Promise.all(
-          i.genresIds.map(async (i) => {
-            if (typeof i === 'string')
-              return (
-                (await this.genreService.getGenre({ _id: i })) || {
-                  _id: 'deleted',
-                }
-              );
-            else return {};
-          }),
-        );
+    const ans = await Promise.all(
+      data.data.items.map(async (item) => {
+        const props = await this.getdataById(item);
 
-        const band = await Promise.all(
-          i.bandsIds.map(async (i) => {
-            if (typeof i === 'string')
-              return (
-                (await this.bandService.getBand({ _id: i })) || {
-                  _id: 'deleted',
-                }
-              );
-            else return {};
-          }),
-        );
-        i['genre'] = genre;
-        i['bands'] = band;
-        return i;
+        return {
+          ...item,
+          ...props,
+        };
       }),
     );
-
-    return ansTrack;
+    return ans;
   }
 
   async createTrack(bodyTrack: CreateTrackInput): Promise<Track> {
-    if (bodyTrack.bands && bodyTrack.bands !== null) {
-      const bandIds = await Promise.all(
-        bodyTrack.bands.map(async (i) => {
-          const band = await this.bandService.createBand(i);
-          return band._id;
-        }),
-      );
-      delete bodyTrack.bands;
-      bodyTrack['bandsIds'] = bandIds;
-    }
-    if (bodyTrack.genre !== null) {
-      const genreIds = await Promise.all(
-        bodyTrack.genre.map(async (i) => {
-          const genre = await this.genreService.createGenre(i);
-
-          return genre._id;
-        }),
-      );
-      delete bodyTrack.genre;
-      bodyTrack['genresIds'] = genreIds;
-    }
+    const trackRen = await this.renameField(bodyTrack);
 
     const data = await this.httpServise.axiosRef.post(
       'http://localhost:3006/v1/tracks',
-      bodyTrack,
+      trackRen,
       {
         headers: {
           Authorization: `Token ${process.env.token}`,
@@ -126,42 +66,15 @@ export class TrackService {
       },
     );
 
-    const genre = await Promise.all(
-      data.data.genresIds.map(
-        async (i) => await this.genreService.getGenre({ _id: i }),
-      ),
-    );
-
-    const band = await Promise.all(
-      data.data.bandsIds.map(
-        async (i) => await this.bandService.getBand({ _id: i }),
-      ),
-    );
-    data.data['genre'] = genre;
-    data.data['bands'] = band;
-    return data.data;
+    return this.getTrack({ id: data.data._id });
   }
 
-  async updateTrack(bodyTrack: UpdateTrackInput):Promise<Track> {
-    let updBand:Band[]
-    let updGenre:Genre[]
-    if (bodyTrack.bands && bodyTrack.bands !== null) {
-       updBand = await Promise.all(
-        bodyTrack.bands.map(async (i) => await this.bandService.updateBand(i)),
-      );
-      delete bodyTrack.bands;
-    }
-    if (bodyTrack.genre && bodyTrack.genre !== null) {
-       updGenre = await Promise.all(
-        bodyTrack.genre.map(
-          async (i) => await this.genreService.updateGenre(i),
-        ),
-      );
-      delete bodyTrack.genre;
-    }
-    const data = this.httpServise.axiosRef.put(
-      'http://localhost:3006/v1/tracks/' + bodyTrack._id,
-      bodyTrack,
+  async updateTrack(bodyTrack: UpdateTrackInput): Promise<Track> {
+    const trackRen = await this.renameField(bodyTrack);
+
+    const data = await this.httpServise.axiosRef.put(
+      'http://localhost:3006/v1/tracks/' + bodyTrack.id,
+      trackRen,
       {
         headers: {
           Authorization: `Token ${process.env.token}`,
@@ -169,15 +82,11 @@ export class TrackService {
       },
     );
 
-    return {
-      ...bodyTrack,
-      genre: updGenre,
-      bands: updBand,
-    };
+    return this.getTrack({ id: bodyTrack.id });
   }
   deleteTrack(bodyDelTracl: DeleteTrackInput): DeleteTrackInput {
     const data = this.httpServise.axiosRef.delete(
-      'http://localhost:3006/v1/tracks/' + bodyDelTracl._id,
+      'http://localhost:3006/v1/tracks/' + bodyDelTracl.id,
       {
         headers: {
           Authorization: `Token ${process.env.token}`,
@@ -185,5 +94,49 @@ export class TrackService {
       },
     );
     return bodyDelTracl;
+  }
+
+  async getdataById(data) {
+    let bands: Band[];
+    let genres: Genre[];
+    let albums: Album;
+    if (data.bandsIds && data.bandsIds !== null) {
+      bands = await Promise.all(
+        data.bandsIds.map(
+          async (i) =>
+            (await this.bandService.getBand({ id: i })) || {
+              _id: 'not found',
+            },
+        ),
+      );
+    }
+    if (data.genresIds && data.genresIds !== null) {
+      genres = await Promise.all(
+        data.genresIds.map(
+          async (i) =>
+            (await this.genresService.getGenre({ id: i })) || {
+              _id: 'not found',
+            },
+        ),
+      );
+    }
+    if (data.albumsIds && data.albumsIds !== null) {
+      albums = await this.albService.getAlbum(data.albumsIds);
+    }
+
+    delete data['bandsIds'];
+    delete data['genresIds'];
+     delete data['albumsIds'];
+    return { genres, bands };
+  }
+
+  async renameField(Obj) {
+    Obj['bandsIds'] = Obj.bands || [];
+    Obj['genresIds'] = Obj.genres || [];
+
+    delete Obj['bands'];
+    delete Obj['genres'];
+
+    return Obj;
   }
 }
