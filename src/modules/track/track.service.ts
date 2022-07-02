@@ -12,6 +12,8 @@ import { Genre } from '../genre/models/genre';
 import { GenreService } from '../genre/genre.service';
 import { Album } from '../album/models/album';
 import { AlbumService } from '../album/album.service';
+import { Artist } from '../artist/models/artist';
+import { ArtistService } from '../artist/artist.service';
 
 @Injectable()
 export class TrackService {
@@ -19,10 +21,10 @@ export class TrackService {
     private readonly httpServise: HttpService,
     private readonly bandService: BandService,
     private readonly genresService: GenreService,
-    //private readonly albService: AlbumService
+    private readonly arttService:ArtistService,
+    @Inject(forwardRef(() => AlbumService))
+    private albService: AlbumService,
   ) {}
-  private albService: AlbumService;
-  private tracks: Track[] = [];
 
   async getTrack(id: GetTrackArg): Promise<Track> {
     const data = await this.httpServise.axiosRef.get(
@@ -50,11 +52,15 @@ export class TrackService {
         };
       }),
     );
+
     return ans;
   }
 
   async createTrack(bodyTrack: CreateTrackInput): Promise<Track> {
+    console.log(bodyTrack);
+
     const trackRen = await this.renameField(bodyTrack);
+    console.log(trackRen);
 
     const data = await this.httpServise.axiosRef.post(
       'http://localhost:3006/v1/tracks',
@@ -100,6 +106,17 @@ export class TrackService {
     let bands: Band[];
     let genres: Genre[];
     let albums: Album;
+    let artists: Artist[];
+
+    if (data.artistsIds && data.artistsIds !== null) {
+      artists = await Promise.all(
+        data.artistsIds.map(
+          async (i) =>
+            (await this.arttService.getArtist({ id: i })) || { id: 'not found' },
+        ),
+      );
+    }
+
     if (data.bandsIds && data.bandsIds !== null) {
       bands = await Promise.all(
         data.bandsIds.map(
@@ -120,22 +137,30 @@ export class TrackService {
         ),
       );
     }
-    if (data.albumsIds && data.albumsIds !== null) {
-      albums = await this.albService.getAlbum(data.albumsIds);
-    }
+    if (data.albumId && data.albumId !== null) {
+      console.log(this.albService);
 
+      albums = await this.albService.getAlbum(data.albumId);
+    }
+    data.id = data._id;
+    delete data['_id'];
     delete data['bandsIds'];
     delete data['genresIds'];
-     delete data['albumsIds'];
-    return { genres, bands };
+    delete data['artistsIds'];
+    delete data['albumId'];
+    return { genres, bands, albums };
   }
 
   async renameField(Obj) {
     Obj['bandsIds'] = Obj.bands || [];
     Obj['genresIds'] = Obj.genres || [];
+    Obj['albumId'] = Obj.albums || null;
+    Obj['artistsIds'] = Obj.artists || [];
 
     delete Obj['bands'];
     delete Obj['genres'];
+    delete Obj['albums'];
+    delete Obj['artists'];
 
     return Obj;
   }

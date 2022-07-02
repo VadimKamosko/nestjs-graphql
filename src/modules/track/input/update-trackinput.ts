@@ -11,7 +11,10 @@ export class UpdateTrackInput {
   title: string;
 
   @Field({ nullable: true })
-  albumId: string;
+  albums: string;
+
+  @Field(() => [String], { nullable: true })
+  artists: string[];
 
   @Field(() => [String], { nullable: true })
   bands: string[];

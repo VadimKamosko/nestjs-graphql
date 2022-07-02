@@ -6,10 +6,13 @@ export class CreateTrackInput {
   title: string;
 
   @Field({ nullable: true })
-  albumId: string;
+  albums: string;
 
   @Field(() => [String], { nullable: true })
   bands: string[];
+
+  @Field(() => [String], { nullable: true })
+  artists: string[];
 
   @Field(() => Int)
   duration: number;

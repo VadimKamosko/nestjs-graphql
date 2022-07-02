@@ -16,7 +16,6 @@ import { AlbumModule } from '../album/album.module';
         maxRedirects: 5,
       }),
     }),
-    forwardRef(()=>AlbumModule)
   ],
   providers: [
     TrackService,
@@ -24,6 +23,7 @@ import { AlbumModule } from '../album/album.module';
     ArtistService,
     BandService,
     GenreService,
+    AlbumService
   ],
 })
 export class TrackModule {}

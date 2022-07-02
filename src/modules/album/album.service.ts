@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ArtistService } from '../artist/artist.service';
 import { Artist } from '../artist/models/artist';
 import { BandService } from '../band/band.service';
@@ -19,7 +19,8 @@ export class AlbumService {
     private readonly httpServise: HttpService,
     private readonly artServ: ArtistService,
     private readonly bandServise: BandService,
-    private readonly trackServise: TrackService,
+    @Inject(forwardRef(() => TrackService))
+    private trackService: TrackService,
     private readonly genreServise: GenreService,
   ) {}
 
@@ -131,7 +132,7 @@ export class AlbumService {
       tracks = await Promise.all(
         data.trackIds.map(
           async (i) =>
-            (await this.trackServise.getTrack({ id: i })) || {
+            (await this.trackService.getTrack({ id: i })) || {
               id: 'not found',
             },
         ),
