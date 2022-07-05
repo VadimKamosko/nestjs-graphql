@@ -7,36 +7,40 @@ import { GetGenresArg } from './DTO/get-genresargs';
 import { DeleteGenreInput } from './input/delete-genreinput';
 import { AxiosResponse } from 'axios';
 import { HttpService } from '@nestjs/axios';
+import { Path } from 'src/urls/urls';
+import { Context } from '@nestjs/graphql';
 
 @Injectable()
 export class GenreService {
   constructor(private readonly httpService: HttpService) {}
   private genres: Genre[] = [];
 
-  public async createGenre(createGenre: CreateGenreInput): Promise<Genre> {
-    if (!process.env.token) throw new ForbiddenException();
-    const data = await this.httpService.axiosRef.post(
-      'http://localhost:3001/v1/genres',
-      createGenre,
-      {
-        headers: {
-          Authorization: `Token ${process.env.token}`,
-        },
+  public async createGenre(
+    createGenre: CreateGenreInput,
+    token: string,
+  ): Promise<Genre> {
+    if (!token) throw new ForbiddenException();
+    const data = await this.httpService.axiosRef.post(Path.genre, createGenre, {
+      headers: {
+        Authorization: `${token}`,
       },
-    );
+    });
 
     return this.replaceId(data.data);
   }
 
-  public async updateGenre(updateGenre: UpdateGenreInput): Promise<Genre> {
-    if (!process.env.token) throw new ForbiddenException();
-
+  public async updateGenre(
+    updateGenre: UpdateGenreInput,
+    token: string,
+  ): Promise<Genre> {
+     if (!token) throw new ForbiddenException();
+    
     const data = await this.httpService.axiosRef.put(
-      'http://localhost:3001/v1/genres/' + updateGenre.id,
+      Path.genre + updateGenre.id,
       updateGenre,
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
@@ -47,7 +51,7 @@ export class GenreService {
     getGenretArg: GetGenreArg,
   ): Promise<AxiosResponse<Genre>> {
     const data = await this.httpService.axiosRef.get(
-      'http://localhost:3001/v1/genres/' + getGenretArg.id,
+      Path.genre + getGenretArg.id,
     );
 
     return this.replaceId(data.data);
@@ -55,8 +59,10 @@ export class GenreService {
   public async getGenres(
     getGenretArg: GetGenresArg,
   ): Promise<AxiosResponse<Genre[]>> {
+    const offset = getGenretArg.offset || 0;
+    const limit = getGenretArg.limit || 5;
     const data = await this.httpService.axiosRef.get(
-      'http://localhost:3001/v1/genres',
+      `${Path.genre}?limit=${limit}&offset=${offset}`,
     );
 
     return data.data.items.map((item) => {
@@ -67,13 +73,14 @@ export class GenreService {
   }
   public async deleteGenre(
     getGenretArg: DeleteGenreInput,
+    token: string,
   ): Promise<DeleteGenreInput> {
-    if (!process.env.token) throw new ForbiddenException();
+    if (!token) throw new ForbiddenException();
     const data = await this.httpService.axiosRef.delete(
-      'http://localhost:3001/v1/genres/' + getGenretArg.id,
+      Path.genre + getGenretArg.id,
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );

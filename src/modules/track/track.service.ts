@@ -14,6 +14,7 @@ import { Album } from '../album/models/album';
 import { AlbumService } from '../album/album.service';
 import { Artist } from '../artist/models/artist';
 import { ArtistService } from '../artist/artist.service';
+import { Path } from 'src/urls/urls';
 
 @Injectable()
 export class TrackService {
@@ -21,15 +22,13 @@ export class TrackService {
     private readonly httpServise: HttpService,
     private readonly bandService: BandService,
     private readonly genresService: GenreService,
-    private readonly arttService:ArtistService,
+    private readonly arttService: ArtistService,
     @Inject(forwardRef(() => AlbumService))
     private albService: AlbumService,
   ) {}
 
   async getTrack(id: GetTrackArg): Promise<Track> {
-    const data = await this.httpServise.axiosRef.get(
-      'http://localhost:3006/v1/tracks/' + id.id,
-    );
+    const data = await this.httpServise.axiosRef.get(Path.track + id.id);
 
     if (!data.data) return null;
     const props = await this.getdataById(data.data);
@@ -39,7 +38,7 @@ export class TrackService {
 
   async getTracks(tracks: GetTracksArg): Promise<Track[]> {
     const data = await this.httpServise.axiosRef.get(
-      'http://localhost:3006/v1/tracks',
+      `${Path.track}?limit=${tracks.limit}&offset=${tracks.offset}`,
     );
 
     const ans = await Promise.all(
@@ -57,21 +56,14 @@ export class TrackService {
   }
 
   async createTrack(bodyTrack: CreateTrackInput): Promise<Track> {
-    console.log(bodyTrack);
-
     const trackRen = await this.renameField(bodyTrack);
-    console.log(trackRen);
 
-    const data = await this.httpServise.axiosRef.post(
-      'http://localhost:3006/v1/tracks',
-      trackRen,
-      {
-        headers: {
-          Authorization: `Token ${process.env.token}`,
-        },
+    const data = await this.httpServise.axiosRef.post(Path.track, trackRen, {
+      headers: {
+        Authorization: `Token ${process.env.token}`,
       },
-    );
-
+    });
+    
     return this.getTrack({ id: data.data._id });
   }
 
@@ -79,7 +71,7 @@ export class TrackService {
     const trackRen = await this.renameField(bodyTrack);
 
     const data = await this.httpServise.axiosRef.put(
-      'http://localhost:3006/v1/tracks/' + bodyTrack.id,
+      Path.track + bodyTrack.id,
       trackRen,
       {
         headers: {
@@ -92,7 +84,7 @@ export class TrackService {
   }
   deleteTrack(bodyDelTracl: DeleteTrackInput): DeleteTrackInput {
     const data = this.httpServise.axiosRef.delete(
-      'http://localhost:3006/v1/tracks/' + bodyDelTracl.id,
+      Path.track + bodyDelTracl.id,
       {
         headers: {
           Authorization: `Token ${process.env.token}`,
@@ -112,7 +104,9 @@ export class TrackService {
       artists = await Promise.all(
         data.artistsIds.map(
           async (i) =>
-            (await this.arttService.getArtist({ id: i })) || { id: 'not found' },
+            (await this.arttService.getArtist({ id: i })) || {
+              id: 'not found',
+            },
         ),
       );
     }
@@ -122,7 +116,7 @@ export class TrackService {
         data.bandsIds.map(
           async (i) =>
             (await this.bandService.getBand({ id: i })) || {
-              _id: 'not found',
+              id: 'not found',
             },
         ),
       );
@@ -132,15 +126,13 @@ export class TrackService {
         data.genresIds.map(
           async (i) =>
             (await this.genresService.getGenre({ id: i })) || {
-              _id: 'not found',
+              id: 'not found',
             },
         ),
       );
     }
     if (data.albumId && data.albumId !== null) {
-      console.log(this.albService);
-
-      albums = await this.albService.getAlbum(data.albumId);
+      albums = await this.albService.getAlbum({ id: data.albumId });
     }
     data.id = data._id;
     delete data['_id'];
@@ -148,14 +140,14 @@ export class TrackService {
     delete data['genresIds'];
     delete data['artistsIds'];
     delete data['albumId'];
-    return { genres, bands, albums };
+    return { genres, bands, albums, artists };
   }
 
   async renameField(Obj) {
-    Obj['bandsIds'] = Obj.bands || [];
-    Obj['genresIds'] = Obj.genres || [];
-    Obj['albumId'] = Obj.albums || null;
-    Obj['artistsIds'] = Obj.artists || [];
+    Obj['bandsIds'] = Obj.bands ;
+    Obj['genresIds'] = Obj.genres ;
+    Obj['albumId'] = Obj.albums ;
+    Obj['artistsIds'] = Obj.artists;
 
     delete Obj['bands'];
     delete Obj['genres'];

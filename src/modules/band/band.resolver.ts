@@ -1,6 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { BandService } from './band.service';
 import { GetBandArg } from './DTO/get-bandarg';
+import { GetGenresArgs } from './DTO/get-genresarg';
 import { CreateInputBand } from './input/create-bandinput';
 import { DeleteBandInput } from './input/delete-bandinput';
 import { UpdateInputBand } from './input/update-bandinput';
@@ -17,8 +18,8 @@ export class BandResolver {
 
 
   @Query(() => [Band], { name: 'bands', nullable: true })
-  getBands(): Promise<Band[]> {
-    return this.bandService.getBands();
+  getBands(@Args()bands:GetGenresArgs): Promise<Band[]> {
+    return this.bandService.getBands(bands);
   }
 
 

@@ -8,6 +8,7 @@ import { DeleteArtistInput } from './input/delete-artistinput';
 import { HttpService } from '@nestjs/axios';
 import { Band } from '../band/models/band';
 import { BandService } from '../band/band.service';
+import { Path } from 'src/urls/urls';
 
 @Injectable()
 export class ArtistService {
@@ -20,15 +21,11 @@ export class ArtistService {
     const renArt = await this.renameField(createArtist);
     console.log(renArt);
 
-    const data = await this.httpService.axiosRef.post(
-      'http://localhost:3002/v1/artists',
-      renArt,
-      {
-        headers: {
-          Authorization: `Token ${process.env.token}`,
-        },
+    const data = await this.httpService.axiosRef.post(Path.artist, renArt, {
+      headers: {
+        Authorization: `Token ${process.env.token}`,
       },
-    );
+    });
 
     return this.getArtist({ id: data.data._id });
   }
@@ -36,7 +33,7 @@ export class ArtistService {
     const renArt = await this.renameField(updateArt);
 
     const data = await this.httpService.axiosRef.put(
-      'http://localhost:3002/v1/artists/' + updateArt.id,
+      Path.artist + updateArt.id,
       renArt,
       {
         headers: {
@@ -49,7 +46,7 @@ export class ArtistService {
   }
   public async getArtist(getArtistArg: GetArtistArgs): Promise<Artist> {
     const data = await this.httpService.axiosRef.get(
-      'http://localhost:3002/v1/artists/' + getArtistArg.id,
+      Path.artist + getArtistArg.id,
     );
     const props = await this.getDataByid(data.data);
 
@@ -57,7 +54,7 @@ export class ArtistService {
   }
   public async getArtists(getArtistsArgs: GetArtistsArgs): Promise<Artist[]> {
     const data = await this.httpService.axiosRef.get(
-      'http://localhost:3002/v1/artists',
+      `${Path.artist}?limit=${getArtistsArgs.limit}&offset=${getArtistsArgs.offset}`,
     );
     return Promise.all(
       data.data.items.map(async (item) => {
@@ -70,7 +67,7 @@ export class ArtistService {
     getArtistsArgs: DeleteArtistInput,
   ): Promise<DeleteArtistInput> {
     const data = await this.httpService.axiosRef.delete(
-      'http://localhost:3002/v1/artists/' + getArtistsArgs.id,
+      Path.artist + getArtistsArgs.id,
       {
         headers: {
           Authorization: `Token ${process.env.token}`,
@@ -104,7 +101,7 @@ export class ArtistService {
   }
 
   async renameField(Obj) {
-    Obj['bandsIds'] = Obj.bands || [];
+    Obj['bandsIds'] = Obj.bands;
 
     delete Obj['bands'];
 

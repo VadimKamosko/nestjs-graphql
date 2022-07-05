@@ -1,24 +1,22 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
+import { Path } from 'src/urls/urls';
 import { Favourite } from './models/favourite';
 
 @Injectable()
 export class FavouriteService {
   constructor(private readonly httpService: HttpService) {}
   async getFavs(): Promise<Favourite> {
-    const data = await this.httpService.axiosRef.get(
-      'http://localhost:3007/v1/favourites',
-      {
-        headers: {
-          Authorization: `Token ${process.env.token}`,
-        },
+    const data = await this.httpService.axiosRef.get(Path.fav, {
+      headers: {
+        Authorization: `Token ${process.env.token}`,
       },
-    );
-    return this.changeObj(data.data)
+    });
+    return this.changeObj(data.data);
   }
   async addTrackToFavourites(track): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
-      'http://localhost:3007/v1/favourites/add',
+      Path.fav,
       { id: track.tracks, type: 'tracks' },
       {
         headers: {
@@ -27,11 +25,11 @@ export class FavouriteService {
       },
     );
 
-    return this.changeObj(data.data)
+    return this.changeObj(data.data);
   }
   async addBandToFavourites(band): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
-      'http://localhost:3007/v1/favourites/add',
+      Path.fav,
       { id: band.bands, type: 'bands' },
       {
         headers: {
@@ -40,11 +38,11 @@ export class FavouriteService {
       },
     );
 
-    return this.changeObj(data.data)
+    return this.changeObj(data.data);
   }
   async addArtistToFavourites(artist): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
-      'http://localhost:3007/v1/favourites/add',
+      Path.fav,
       { id: artist.artists, type: 'artists' },
       {
         headers: {
@@ -53,12 +51,12 @@ export class FavouriteService {
       },
     );
 
-    return this.changeObj(data.data)
+    return this.changeObj(data.data);
   }
 
   async addGenreToFavourites(genre): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
-      'http://localhost:3007/v1/favourites/add',
+      Path.fav,
       { id: genre.genres, type: 'genres' },
       {
         headers: {
@@ -67,13 +65,8 @@ export class FavouriteService {
       },
     );
 
-    return this.changeObj(data.data)
+    return this.changeObj(data.data);
   }
-
-
-
-
-
 
   changeObj(obj) {
     return {

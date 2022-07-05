@@ -2,9 +2,9 @@ import { ArgsType, Field, Int } from '@nestjs/graphql';
 import { IsArray } from 'class-validator';
 
 @ArgsType()
-export class GetGenresArg {
-  @Field(()=>Int,{nullable:true})
+export class GetGenresArgs {
+  @Field(() => Int, { nullable: true, defaultValue: 0 })
   offset: number;
-  @Field(()=>Int,{nullable:true})
+  @Field(() => Int, { nullable: true, defaultValue: 5 })
   limit: number;
 }

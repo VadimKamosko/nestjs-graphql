@@ -1,6 +1,7 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { AlbumService } from './album.service';
 import { GetAlbumArgs } from './DTO/get-albumargs';
+import { GetAlbumsArgs } from './DTO/get-albumsdto';
 import { CreateInputAlbum } from './inputs/create-inputmodule';
 import { DeleteAlbumInput } from './inputs/delete-albuminout';
 import { UpdateInputAlbum } from './inputs/update-albuminput';
@@ -16,8 +17,8 @@ export class AlbumResolver {
   }
 
   @Query(() => [Album], { name: 'albums', nullable: 'items' })
-  getAlbums(): Promise<Album[]> {
-    return this.albServise.getAlbums();
+  getAlbums(@Args() albums: GetAlbumsArgs): Promise<Album[]> {
+    return this.albServise.getAlbums(albums);
   }
 
   @Mutation(() => Album)

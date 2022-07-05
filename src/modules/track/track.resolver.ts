@@ -1,3 +1,4 @@
+import { forwardRef, Inject } from '@nestjs/common';
 import {
   Query,
   Args,
@@ -20,7 +21,8 @@ import { TrackService } from './track.service';
 export class TrackResolver {
   constructor(
     private readonly trackServise: TrackService,
-    //  private readonly albServ: AlbumService,
+    // @Inject(forwardRef(() => AlbumService))
+    // private albService: AlbumService,
   ) {}
 
   @Query(() => Track, { name: 'track', nullable: true })
@@ -51,8 +53,8 @@ export class TrackResolver {
   ): DeleteTrackInput {
     return this.trackServise.deleteTrack(delTrackId);
   }
-  // @ResolveField()
+  // @ResolveField(() => Album)
   // async getArtist(@Parent() track: Track) {
-  //   return this.albServ.getAlbum({ id: track.albums });
+  //   return this.albService.getAlbum({ id: track.albums });
   // }
 }
