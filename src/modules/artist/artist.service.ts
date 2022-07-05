@@ -17,19 +17,25 @@ export class ArtistService {
     private readonly bandService: BandService,
   ) {}
 
-  public async createArtist(createArtist: CreateArtistInput): Promise<Artist> {
+  public async createArtist(
+    createArtist: CreateArtistInput,
+    token: string,
+  ): Promise<Artist> {
     const renArt = await this.renameField(createArtist);
     console.log(renArt);
 
     const data = await this.httpService.axiosRef.post(Path.artist, renArt, {
       headers: {
-        Authorization: `Token ${process.env.token}`,
+        Authorization: `${token}`,
       },
     });
 
     return this.getArtist({ id: data.data._id });
   }
-  public async updateArtist(updateArt: UpdateArtistinput): Promise<Artist> {
+  public async updateArtist(
+    updateArt: UpdateArtistinput,
+    token: string,
+  ): Promise<Artist> {
     const renArt = await this.renameField(updateArt);
 
     const data = await this.httpService.axiosRef.put(
@@ -37,7 +43,7 @@ export class ArtistService {
       renArt,
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
@@ -65,12 +71,13 @@ export class ArtistService {
   }
   public async deleteArist(
     getArtistsArgs: DeleteArtistInput,
+    token: string,
   ): Promise<DeleteArtistInput> {
     const data = await this.httpService.axiosRef.delete(
       Path.artist + getArtistsArgs.id,
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );

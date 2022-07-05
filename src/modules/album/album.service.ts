@@ -50,19 +50,19 @@ export class AlbumService {
     return ans;
   }
 
-  async createAlbun(album: CreateInputAlbum): Promise<Album> {
+  async createAlbun(album: CreateInputAlbum, token: string): Promise<Album> {
     const albumRen = await this.renameField(album);
 
     const data = await this.httpServise.axiosRef.post(Path.album, albumRen, {
       headers: {
-        Authorization: `Token ${process.env.token}`,
+        Authorization: `${token}`,
       },
     });
 
     return this.getAlbum({ id: data.data._id });
   }
 
-  async updateAlbum(album: UpdateInputAlbum) {
+  async updateAlbum(album: UpdateInputAlbum, token: string) {
     const albumRen = await this.renameField(album);
 
     const data = await this.httpServise.axiosRef.put(
@@ -70,7 +70,7 @@ export class AlbumService {
       albumRen,
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
@@ -78,10 +78,13 @@ export class AlbumService {
     return this.getAlbum({ id: data.data._id });
   }
 
-  async deleteAlbum(id: DeleteAlbumInput): Promise<DeleteAlbumInput> {
+  async deleteAlbum(
+    id: DeleteAlbumInput,
+    token: string,
+  ): Promise<DeleteAlbumInput> {
     const data = await this.httpServise.axiosRef.delete(Path.album + id.id, {
       headers: {
-        Authorization: `Token ${process.env.token}`,
+        Authorization: `${token}`,
       },
     });
     return id;
@@ -139,7 +142,7 @@ export class AlbumService {
       delete data['trackIds'];
       data.tracks = tracks;
     }
-    
+
     data.id = data._id;
     delete data['_id'];
 

@@ -55,19 +55,25 @@ export class TrackService {
     return ans;
   }
 
-  async createTrack(bodyTrack: CreateTrackInput): Promise<Track> {
+  async createTrack(
+    bodyTrack: CreateTrackInput,
+    token: string,
+  ): Promise<Track> {
     const trackRen = await this.renameField(bodyTrack);
 
     const data = await this.httpServise.axiosRef.post(Path.track, trackRen, {
       headers: {
-        Authorization: `Token ${process.env.token}`,
+        Authorization: `${token}`,
       },
     });
-    
+
     return this.getTrack({ id: data.data._id });
   }
 
-  async updateTrack(bodyTrack: UpdateTrackInput): Promise<Track> {
+  async updateTrack(
+    bodyTrack: UpdateTrackInput,
+    token: string,
+  ): Promise<Track> {
     const trackRen = await this.renameField(bodyTrack);
 
     const data = await this.httpServise.axiosRef.put(
@@ -75,19 +81,19 @@ export class TrackService {
       trackRen,
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
 
     return this.getTrack({ id: bodyTrack.id });
   }
-  deleteTrack(bodyDelTracl: DeleteTrackInput): DeleteTrackInput {
+  deleteTrack(bodyDelTracl: DeleteTrackInput, token: string): DeleteTrackInput {
     const data = this.httpServise.axiosRef.delete(
       Path.track + bodyDelTracl.id,
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
@@ -144,9 +150,9 @@ export class TrackService {
   }
 
   async renameField(Obj) {
-    Obj['bandsIds'] = Obj.bands ;
-    Obj['genresIds'] = Obj.genres ;
-    Obj['albumId'] = Obj.albums ;
+    Obj['bandsIds'] = Obj.bands;
+    Obj['genresIds'] = Obj.genres;
+    Obj['albumId'] = Obj.albums;
     Obj['artistsIds'] = Obj.artists;
 
     delete Obj['bands'];

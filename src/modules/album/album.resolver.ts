@@ -1,4 +1,4 @@
-import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
+import { Resolver, Query, Args, Mutation, Context } from '@nestjs/graphql';
 import { AlbumService } from './album.service';
 import { GetAlbumArgs } from './DTO/get-albumargs';
 import { GetAlbumsArgs } from './DTO/get-albumsdto';
@@ -22,19 +22,26 @@ export class AlbumResolver {
   }
 
   @Mutation(() => Album)
-  createAlbum(@Args('CreateAlbum') album: CreateInputAlbum): Promise<Album> {
-    return this.albServise.createAlbun(album);
+  createAlbum(
+    @Args('CreateAlbum') album: CreateInputAlbum,
+    @Context() token: any,
+  ): Promise<Album> {
+    return this.albServise.createAlbun(album, token.token);
   }
 
   @Mutation(() => Album)
-  updateAlbum(@Args('updateAlbum') album: UpdateInputAlbum): Promise<Album> {
-    return this.albServise.updateAlbum(album);
+  updateAlbum(
+    @Args('updateAlbum') album: UpdateInputAlbum,
+    @Context() token: any,
+  ): Promise<Album> {
+    return this.albServise.updateAlbum(album, token.token);
   }
 
   @Mutation(() => Album)
   deleteAlbum(
     @Args('deleteAlbum') id: DeleteAlbumInput,
+    @Context() token: any,
   ): Promise<DeleteAlbumInput> {
-    return this.albServise.deleteAlbum(id);
+    return this.albServise.deleteAlbum(id, token.token);
   }
 }

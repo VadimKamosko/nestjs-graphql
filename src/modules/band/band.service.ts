@@ -16,17 +16,17 @@ export class BandService {
     private readonly genreService: GenreService,
   ) {}
 
-  async createBand(body: CreateInputBand): Promise<Band> {
+  async createBand(body: CreateInputBand,token:string): Promise<Band> {
     const bandmRen = await this.renameField(body);
     const data = await this.httpService.axiosRef.post(Path.band, bandmRen, {
       headers: {
-        Authorization: `Token ${process.env.token}`,
+        Authorization: `${token}`,
       },
     });
 
     return this.getBand({ id: data.data._id });
   }
-  async updateBand(body: UpdateInputBand): Promise<Band> {
+  async updateBand(body: UpdateInputBand,token:string): Promise<Band> {
     if (!process.env.token) throw new ForbiddenException();
     const bandRen = await this.renameField(body);
 
@@ -35,7 +35,7 @@ export class BandService {
       bandRen,
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
@@ -66,10 +66,10 @@ export class BandService {
     return ans;
   }
 
-  async removeBands(id: DeleteBandInput): Promise<DeleteBandInput> {
+  async removeBands(id: DeleteBandInput,token:string): Promise<DeleteBandInput> {
     const data = await this.httpService.axiosRef.delete(Path.band + id.id, {
       headers: {
-        Authorization: `Token ${process.env.token}`,
+        Authorization: `${token}`,
       },
     });
     return id;

@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { BandService } from './band.service';
 import { GetBandArg } from './DTO/get-bandarg';
 import { GetGenresArgs } from './DTO/get-genresarg';
@@ -16,27 +16,32 @@ export class BandResolver {
     return this.bandService.getBand(idBand);
   }
 
-
   @Query(() => [Band], { name: 'bands', nullable: true })
-  getBands(@Args()bands:GetGenresArgs): Promise<Band[]> {
+  getBands(@Args() bands: GetGenresArgs): Promise<Band[]> {
     return this.bandService.getBands(bands);
   }
 
-
   @Mutation(() => Band)
-  createBand(@Args('createBand') createBandData: CreateInputBand): Promise<Band> {
-    return this.bandService.createBand(createBandData);
+  createBand(
+    @Args('createBand') createBandData: CreateInputBand,
+    @Context() token: any,
+  ): Promise<Band> {
+    return this.bandService.createBand(createBandData, token.token);
   }
 
   @Mutation(() => Band)
-  updateBand(@Args('updateBand') band: UpdateInputBand): Promise<Band> {
-    return this.bandService.updateBand(band);
+  updateBand(
+    @Args('updateBand') band: UpdateInputBand,
+    @Context() token: any,
+  ): Promise<Band> {
+    return this.bandService.updateBand(band, token.token);
   }
 
   @Mutation(() => Band)
   removeBand(
     @Args('removeBand') idBand: DeleteBandInput,
+    @Context() token: any,
   ): Promise<DeleteBandInput> {
-    return this.bandService.removeBands(idBand);
+    return this.bandService.removeBands(idBand, token.token);
   }
 }

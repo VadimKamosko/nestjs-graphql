@@ -6,47 +6,47 @@ import { Favourite } from './models/favourite';
 @Injectable()
 export class FavouriteService {
   constructor(private readonly httpService: HttpService) {}
-  async getFavs(): Promise<Favourite> {
+  async getFavs(token: string): Promise<Favourite> {
     const data = await this.httpService.axiosRef.get(Path.fav, {
       headers: {
-        Authorization: `Token ${process.env.token}`,
+        Authorization: `${token}`,
       },
     });
     return this.changeObj(data.data);
   }
-  async addTrackToFavourites(track): Promise<Favourite> {
+  async addTrackToFavourites(track, token: string): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
       Path.fav,
       { id: track.tracks, type: 'tracks' },
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
 
     return this.changeObj(data.data);
   }
-  async addBandToFavourites(band): Promise<Favourite> {
+  async addBandToFavourites(band, token: string): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
       Path.fav,
       { id: band.bands, type: 'bands' },
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
 
     return this.changeObj(data.data);
   }
-  async addArtistToFavourites(artist): Promise<Favourite> {
+  async addArtistToFavourites(artist, token: string): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
       Path.fav,
       { id: artist.artists, type: 'artists' },
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
@@ -54,13 +54,13 @@ export class FavouriteService {
     return this.changeObj(data.data);
   }
 
-  async addGenreToFavourites(genre): Promise<Favourite> {
+  async addGenreToFavourites(genre, token: string): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
       Path.fav,
       { id: genre.genres, type: 'genres' },
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `Token ${token}`,
         },
       },
     );
