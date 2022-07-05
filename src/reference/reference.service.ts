@@ -106,17 +106,26 @@ export class ReferenceService {
     return data;
   }
   async renameField(Obj) {
-    Obj['genresIds'] = Obj.genres;
-    Obj['bandsIds'] = Obj.bands;
-    Obj['trackIds'] = Obj.tracks;
-    Obj['artistsIds'] = Obj.artists;
-    Obj['albumId'] = Obj.albums;
-
-    delete Obj['genres'];
-    delete Obj['bands'];
-    delete Obj['artists'];
-    delete Obj['tracks'];
-    delete Obj['albums'];
+    if (Obj.genres) {
+      Obj['genresIds'] = Obj.genres;
+      delete Obj['genres'];
+    }
+    if (Obj.bands) {
+      Obj['bandsIds'] = Obj.bands;
+      delete Obj['bands'];
+    }
+    if (Obj.bands) {
+      Obj['trackIds'] = Obj.tracks;
+      delete Obj['tracks'];
+    }
+    if (Obj.artists) {
+      Obj['artistsIds'] = Obj.artists;
+      delete Obj['artists'];
+    }
+    if (Obj.albums) {
+      Obj['albumId'] = Obj.albums;
+      delete Obj['albums'];
+    }
 
     return Obj;
   }

@@ -2,8 +2,6 @@ import { HttpService } from '@nestjs/axios';
 import { ForbiddenException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ReferenceService } from 'src/reference/reference.service';
 import { Path } from 'src/urls/urls';
-import { GenreService } from '../genre/genre.service';
-import { Genre } from '../genre/models/genre';
 import { GetBandArg } from './DTO/get-bandarg';
 import { CreateInputBand } from './input/create-bandinput';
 import { DeleteBandInput } from './input/delete-bandinput';
@@ -77,29 +75,4 @@ export class BandService {
     });
     return id;
   }
-  // async getByid(data) {
-  //   let genres: Genre[];
-  //   if (data.genresIds && data.genresIds !== null) {
-  //     genres = await Promise.all(
-  //       data.genresIds.map(
-  //         async (i) =>
-  //           (await this.genreService.getGenre({ id: i })) || {
-  //             id: 'not found',
-  //           },
-  //       ),
-  //     );
-  //     delete data['genresIds'];
-  //     data.genres = genres;
-  //   }
-
-  //   data.id = data._id;
-  //   delete data['_id'];
-  //   return data;
-  // }
-  // async renameField(Obj) {
-  //   Obj['genresIds'] = Obj.genres;
-  //   delete Obj['genres'];
-
-  //   return Obj;
-  // }
 }

@@ -6,14 +6,6 @@ import { Track } from './models/track';
 import { UpdateTrackInput } from './input/update-trackinput';
 import { DeleteTrackInput } from './input/delete-trackinput';
 import { HttpService } from '@nestjs/axios';
-import { BandService } from '../band/band.service';
-import { Band } from '../band/models/band';
-import { Genre } from '../genre/models/genre';
-import { GenreService } from '../genre/genre.service';
-import { Album } from '../album/models/album';
-import { AlbumService } from '../album/album.service';
-import { Artist } from '../artist/models/artist';
-import { ArtistService } from '../artist/artist.service';
 import { Path } from 'src/urls/urls';
 import { ReferenceService } from 'src/reference/reference.service';
 
@@ -98,68 +90,4 @@ export class TrackService {
     return bodyDelTracl;
   }
 
-  // async getdataById(data) {
-  //   let bands: Band[];
-  //   let genres: Genre[];
-  //   let albums: Album;
-  //   let artists: Artist[];
-
-  //   if (data.artistsIds && data.artistsIds !== null) {
-  //     artists = await Promise.all(
-  //       data.artistsIds.map(
-  //         async (i) =>
-  //           (await this.arttService.getArtist({ id: i })) || {
-  //             id: 'not found',
-  //           },
-  //       ),
-  //     );
-  //   }
-
-  //   if (data.bandsIds && data.bandsIds !== null) {
-  //     bands = await Promise.all(
-  //       data.bandsIds.map(
-  //         async (i) =>
-  //           (await this.bandService.getBand({ id: i })) || {
-  //             id: 'not found',
-  //           },
-  //       ),
-  //     );
-  //   }
-  //   if (data.genresIds && data.genresIds !== null) {
-  //     genres = await Promise.all(
-  //       data.genresIds.map(
-  //         async (i) =>
-  //           (await this.genresService.getGenre({ id: i })) || {
-  //             id: 'not found',
-  //           },
-  //       ),
-  //     );
-  //   }
-  //   if (data.albumId && data.albumId !== null) {
-  //     albums = await this.albService.getAlbum({ id: data.albumId });
-  //     delete data['albumId'];
-  //     data.albums = albums
-  //   }
-  //   data.id = data._id;
-  //   delete data['_id'];
-  //   delete data['bandsIds'];
-  //   delete data['genresIds'];
-  //   delete data['artistsIds'];
-    
-  //   return { genres, bands, albums, artists };
-  // }
-
-  // async renameField(Obj) {
-  //   Obj['bandsIds'] = Obj.bands;
-  //   Obj['genresIds'] = Obj.genres;
-  //   Obj['albumId'] = Obj.albums;
-  //   Obj['artistsIds'] = Obj.artists;
-
-  //   delete Obj['bands'];
-  //   delete Obj['genres'];
-  //   delete Obj['albums'];
-  //   delete Obj['artists'];
-
-  //   return Obj;
-  // }
 }

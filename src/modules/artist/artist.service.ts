@@ -6,8 +6,6 @@ import { GetArtistArgs } from './DTO/get-artist.args';
 import { GetArtistsArgs } from './DTO/get-artists.args';
 import { DeleteArtistInput } from './input/delete-artistinput';
 import { HttpService } from '@nestjs/axios';
-import { Band } from '../band/models/band';
-import { BandService } from '../band/band.service';
 import { Path } from 'src/urls/urls';
 import { ReferenceService } from 'src/reference/reference.service';
 
@@ -24,7 +22,6 @@ export class ArtistService {
     token: string,
   ): Promise<Artist> {
     const renArt = await this.refSer.renameField(createArtist);
-    console.log(renArt);
 
     const data = await this.httpService.axiosRef.post(Path.artist, renArt, {
       headers: {
@@ -86,34 +83,4 @@ export class ArtistService {
 
     return getArtistsArgs;
   }
-  // async getDataByid(data) {
-  //   let bands: Band[];
-
-  //   if (data.bandsIds && data.bandsIds !== null) {
-  //     bands = await Promise.all(
-  //       data.bandsIds.map(
-  //         async (i) =>
-  //           (await this.bandService.getBand({ id: i })) || {
-  //             id: 'not found',
-  //           },
-  //       ),
-  //     );
-  //   }
-  //   if (!data.id) {
-  //     data.id = data._id;
-  //     delete data['_id'];
-  //   }
-
-  //   delete data['bandsIds'];
-
-  //   return { bands };
-  // }
-
-  // async renameField(Obj) {
-  //   Obj['bandsIds'] = Obj.bands;
-
-  //   delete Obj['bands'];
-
-  //   return Obj;
-  // }
 }
