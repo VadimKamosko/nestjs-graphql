@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, forwardRef, Inject, Injectable } from '@nestjs/common';
+import { ReferenceService } from 'src/reference/reference.service';
 import { Path } from 'src/urls/urls';
 import { GenreService } from '../genre/genre.service';
 import { Genre } from '../genre/models/genre';
@@ -13,11 +14,13 @@ import { Band } from './models/band';
 export class BandService {
   constructor(
     private readonly httpService: HttpService,
-    private readonly genreService: GenreService,
+    @Inject(forwardRef(() => ReferenceService))
+    private refSer: ReferenceService,
+
   ) {}
 
   async createBand(body: CreateInputBand,token:string): Promise<Band> {
-    const bandmRen = await this.renameField(body);
+    const bandmRen = await this.refSer.renameField(body);
     const data = await this.httpService.axiosRef.post(Path.band, bandmRen, {
       headers: {
         Authorization: `${token}`,
@@ -28,7 +31,7 @@ export class BandService {
   }
   async updateBand(body: UpdateInputBand,token:string): Promise<Band> {
     if (!process.env.token) throw new ForbiddenException();
-    const bandRen = await this.renameField(body);
+    const bandRen = await this.refSer.renameField(body);
 
     const data = await this.httpService.axiosRef.put(
       Path.band + body.id,
@@ -44,7 +47,7 @@ export class BandService {
   }
   async getBand(id: GetBandArg): Promise<Band> {
     const data = await this.httpService.axiosRef.get(Path.band + id.id);
-    const props = await this.getByid(data.data);
+    const props = await this.refSer.getByids(data.data);
 
     return { ...props };
   }
@@ -56,7 +59,7 @@ export class BandService {
 
     const ans = await Promise.all(
       data.data.items.map(async (item) => {
-        const props = await this.getByid(item);
+        const props = await this.refSer.getByids(item);
 
         return {
           ...props,
@@ -74,29 +77,29 @@ export class BandService {
     });
     return id;
   }
-  async getByid(data) {
-    let genres: Genre[];
-    if (data.genresIds && data.genresIds !== null) {
-      genres = await Promise.all(
-        data.genresIds.map(
-          async (i) =>
-            (await this.genreService.getGenre({ id: i })) || {
-              id: 'not found',
-            },
-        ),
-      );
-      delete data['genresIds'];
-      data.genres = genres;
-    }
+  // async getByid(data) {
+  //   let genres: Genre[];
+  //   if (data.genresIds && data.genresIds !== null) {
+  //     genres = await Promise.all(
+  //       data.genresIds.map(
+  //         async (i) =>
+  //           (await this.genreService.getGenre({ id: i })) || {
+  //             id: 'not found',
+  //           },
+  //       ),
+  //     );
+  //     delete data['genresIds'];
+  //     data.genres = genres;
+  //   }
 
-    data.id = data._id;
-    delete data['_id'];
-    return data;
-  }
-  async renameField(Obj) {
-    Obj['genresIds'] = Obj.genres;
-    delete Obj['genres'];
+  //   data.id = data._id;
+  //   delete data['_id'];
+  //   return data;
+  // }
+  // async renameField(Obj) {
+  //   Obj['genresIds'] = Obj.genres;
+  //   delete Obj['genres'];
 
-    return Obj;
-  }
+  //   return Obj;
+  // }
 }

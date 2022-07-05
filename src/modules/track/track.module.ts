@@ -7,6 +7,7 @@ import { BandService } from '../band/band.service';
 import { GenreService } from '../genre/genre.service';
 import { AlbumService } from '../album/album.service';
 import { AlbumModule } from '../album/album.module';
+import { ReferenceService } from 'src/reference/reference.service';
 
 @Module({
   imports: [
@@ -20,10 +21,7 @@ import { AlbumModule } from '../album/album.module';
   providers: [
     TrackService,
     TrackResolver,
-    ArtistService,
-    BandService,
-    GenreService,
-    AlbumService
+    ReferenceService,
   ],
 })
 export class TrackModule {}

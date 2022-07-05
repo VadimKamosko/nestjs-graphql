@@ -1,14 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { ReferenceService } from 'src/reference/reference.service';
 import { Path } from 'src/urls/urls';
-import { ArtistService } from '../artist/artist.service';
-import { Artist } from '../artist/models/artist';
-import { BandService } from '../band/band.service';
-import { Band } from '../band/models/band';
-import { GenreService } from '../genre/genre.service';
-import { Genre } from '../genre/models/genre';
-import { Track } from '../track/models/track';
-import { TrackService } from '../track/track.service';
 import { GetAlbumsArgs } from './DTO/get-albumsdto';
 import { CreateInputAlbum } from './inputs/create-inputmodule';
 import { DeleteAlbumInput } from './inputs/delete-albuminout';
@@ -19,16 +12,13 @@ import { Album } from './models/album';
 export class AlbumService {
   constructor(
     private readonly httpServise: HttpService,
-    private readonly artServ: ArtistService,
-    private readonly bandServise: BandService,
-    @Inject(forwardRef(() => TrackService))
-    private trackService: TrackService,
-    private readonly genreServise: GenreService,
+    @Inject(forwardRef(() => ReferenceService))
+    private refSer: ReferenceService,
   ) {}
 
   async getAlbum(id) {
     const data = await this.httpServise.axiosRef.get(Path.album + id.id);
-    const props = await this.getByids(data.data);
+    const props = await this.refSer.getByids(data.data);
 
     return { ...props };
   }
@@ -39,7 +29,7 @@ export class AlbumService {
     );
     const ans = await Promise.all(
       data.data.items.map(async (item) => {
-        const props = await this.getByids(item);
+        const props = await this.refSer.getByids(item);
 
         return {
           ...props,
@@ -51,7 +41,7 @@ export class AlbumService {
   }
 
   async createAlbun(album: CreateInputAlbum, token: string): Promise<Album> {
-    const albumRen = await this.renameField(album);
+    const albumRen = await this.refSer.renameField(album);
 
     const data = await this.httpServise.axiosRef.post(Path.album, albumRen, {
       headers: {
@@ -63,7 +53,7 @@ export class AlbumService {
   }
 
   async updateAlbum(album: UpdateInputAlbum, token: string) {
-    const albumRen = await this.renameField(album);
+    const albumRen = await this.refSer.renameField(album);
 
     const data = await this.httpServise.axiosRef.put(
       Path.album + album.id,
@@ -88,77 +78,5 @@ export class AlbumService {
       },
     });
     return id;
-  }
-
-  async getByids(data) {
-    let artists: Artist[];
-    let bands: Band[];
-    let genres: Genre[];
-    let tracks: Track[];
-    if (data.artistsIds && data.artistsIds !== null) {
-      artists = await Promise.all(
-        data.artistsIds.map(
-          async (i) =>
-            (await this.artServ.getArtist({ id: i })) || { id: 'not found' },
-        ),
-      );
-      delete data['artistsIds'];
-      data.artists = artists;
-    }
-    if (data.bandsIds && data.bandsIds !== null) {
-      bands = await Promise.all(
-        data.bandsIds.map(
-          async (i) =>
-            (await this.bandServise.getBand({ id: i })) || {
-              id: 'not found',
-            },
-        ),
-      );
-      delete data['bandsIds'];
-      data.bands = bands;
-    }
-    if (data.genresIds && data.genresIds !== null) {
-      genres = await Promise.all(
-        data.genresIds.map(
-          async (i) =>
-            (await this.genreServise.getGenre({ id: i })) || {
-              id: 'not found',
-            },
-        ),
-      );
-
-      delete data['genresIds'];
-      data.genres = genres;
-    }
-    if (data.trackIds && data.trackIds !== null) {
-      tracks = await Promise.all(
-        data.trackIds.map(
-          async (i) =>
-            (await this.trackService.getTrack({ id: i })) || {
-              id: 'not found',
-            },
-        ),
-      );
-      delete data['trackIds'];
-      data.tracks = tracks;
-    }
-
-    data.id = data._id;
-    delete data['_id'];
-
-    return data;
-  }
-  async renameField(Obj) {
-    Obj['genresIds'] = Obj.genres;
-    Obj['bandsIds'] = Obj.bands;
-    Obj['trackIds'] = Obj.tracks;
-    Obj['artistsIds'] = Obj.artists;
-
-    delete Obj['genres'];
-    delete Obj['bands'];
-    delete Obj['artists'];
-    delete Obj['tracks'];
-
-    return Obj;
   }
 }

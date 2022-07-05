@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { BandModule } from './modules/band/band.module';
 import { FavouriteModule } from './modules/favourite/favourite.module';
 import { AlbumModule } from './modules/album/album.module';
+import { ReferenceModule } from './reference/reference.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { AlbumModule } from './modules/album/album.module';
       driver: ApolloDriver,
       autoSchemaFile: true,
       context: ({ req }) => {
-        const token = req.headers.authorization || '';
+        const token =
+          req.headers['authorization'] || req.headers['Authorization'] || '';
         return { token };
       },
     }),
@@ -27,6 +29,7 @@ import { AlbumModule } from './modules/album/album.module';
     BandModule,
     FavouriteModule,
     AlbumModule,
+    ReferenceModule,
   ],
   controllers: [],
   providers: [],

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { CreateArtistInput } from './input/create-artist.input';
 import { Artist } from './models/artist';
 import { UpdateArtistinput } from './input/update-artistinput';
@@ -9,19 +9,21 @@ import { HttpService } from '@nestjs/axios';
 import { Band } from '../band/models/band';
 import { BandService } from '../band/band.service';
 import { Path } from 'src/urls/urls';
+import { ReferenceService } from 'src/reference/reference.service';
 
 @Injectable()
 export class ArtistService {
   constructor(
     private readonly httpService: HttpService,
-    private readonly bandService: BandService,
+    @Inject(forwardRef(() => ReferenceService))
+    private refSer: ReferenceService,
   ) {}
 
   public async createArtist(
     createArtist: CreateArtistInput,
     token: string,
   ): Promise<Artist> {
-    const renArt = await this.renameField(createArtist);
+    const renArt = await this.refSer.renameField(createArtist);
     console.log(renArt);
 
     const data = await this.httpService.axiosRef.post(Path.artist, renArt, {
@@ -36,7 +38,7 @@ export class ArtistService {
     updateArt: UpdateArtistinput,
     token: string,
   ): Promise<Artist> {
-    const renArt = await this.renameField(updateArt);
+    const renArt = await this.refSer.renameField(updateArt);
 
     const data = await this.httpService.axiosRef.put(
       Path.artist + updateArt.id,
@@ -54,7 +56,7 @@ export class ArtistService {
     const data = await this.httpService.axiosRef.get(
       Path.artist + getArtistArg.id,
     );
-    const props = await this.getDataByid(data.data);
+    const props = await this.refSer.getByids(data.data);
 
     return { ...data.data, ...props };
   }
@@ -64,7 +66,7 @@ export class ArtistService {
     );
     return Promise.all(
       data.data.items.map(async (item) => {
-        const props = await this.getDataByid(item);
+        const props = await this.refSer.getByids(item);
         return { ...item, ...props };
       }),
     );
@@ -84,34 +86,34 @@ export class ArtistService {
 
     return getArtistsArgs;
   }
-  async getDataByid(data) {
-    let bands: Band[];
+  // async getDataByid(data) {
+  //   let bands: Band[];
 
-    if (data.bandsIds && data.bandsIds !== null) {
-      bands = await Promise.all(
-        data.bandsIds.map(
-          async (i) =>
-            (await this.bandService.getBand({ id: i })) || {
-              id: 'not found',
-            },
-        ),
-      );
-    }
-    if (!data.id) {
-      data.id = data._id;
-      delete data['_id'];
-    }
+  //   if (data.bandsIds && data.bandsIds !== null) {
+  //     bands = await Promise.all(
+  //       data.bandsIds.map(
+  //         async (i) =>
+  //           (await this.bandService.getBand({ id: i })) || {
+  //             id: 'not found',
+  //           },
+  //       ),
+  //     );
+  //   }
+  //   if (!data.id) {
+  //     data.id = data._id;
+  //     delete data['_id'];
+  //   }
 
-    delete data['bandsIds'];
+  //   delete data['bandsIds'];
 
-    return { bands };
-  }
+  //   return { bands };
+  // }
 
-  async renameField(Obj) {
-    Obj['bandsIds'] = Obj.bands;
+  // async renameField(Obj) {
+  //   Obj['bandsIds'] = Obj.bands;
 
-    delete Obj['bands'];
+  //   delete Obj['bands'];
 
-    return Obj;
-  }
+  //   return Obj;
+  // }
 }

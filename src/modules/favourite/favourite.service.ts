@@ -16,7 +16,7 @@ export class FavouriteService {
   }
   async addTrackToFavourites(track, token: string): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
-      Path.fav,
+      Path.fav + 'add',
       { id: track.tracks, type: 'tracks' },
       {
         headers: {
@@ -29,7 +29,7 @@ export class FavouriteService {
   }
   async addBandToFavourites(band, token: string): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
-      Path.fav,
+      Path.fav + 'add',
       { id: band.bands, type: 'bands' },
       {
         headers: {
@@ -42,7 +42,7 @@ export class FavouriteService {
   }
   async addArtistToFavourites(artist, token: string): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
-      Path.fav,
+      Path.fav + 'add',
       { id: artist.artists, type: 'artists' },
       {
         headers: {
@@ -56,11 +56,11 @@ export class FavouriteService {
 
   async addGenreToFavourites(genre, token: string): Promise<Favourite> {
     const data = await this.httpService.axiosRef.put(
-      Path.fav,
+      Path.fav+'add',
       { id: genre.genres, type: 'genres' },
       {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `${token}`,
         },
       },
     );

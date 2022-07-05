@@ -1,5 +1,6 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
+import { ReferenceService } from 'src/reference/reference.service';
 import { BandService } from '../band/band.service';
 import { GenreService } from '../genre/genre.service';
 import { ArtistResolver } from './artist.resolver';
@@ -14,6 +15,10 @@ import { ArtistService } from './artist.service';
       }),
     }),
   ],
-  providers: [ArtistResolver, ArtistService, BandService, GenreService],
+  providers: [
+    ArtistResolver,
+    ArtistService,
+    ReferenceService,
+  ],
 })
 export class ArtistModule {}
