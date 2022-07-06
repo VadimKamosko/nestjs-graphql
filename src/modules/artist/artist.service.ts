@@ -8,6 +8,7 @@ import { DeleteArtistInput } from './input/delete-artistinput';
 import { HttpService } from '@nestjs/axios';
 import { Path } from 'src/urls/urls';
 import { ReferenceService } from 'src/reference/reference.service';
+import { stringify } from 'qs';
 
 @Injectable()
 export class ArtistService {
@@ -59,7 +60,9 @@ export class ArtistService {
   }
   public async getArtists(getArtistsArgs: GetArtistsArgs): Promise<Artist[]> {
     const data = await this.httpService.axiosRef.get(
-      `${Path.artist}?limit=${getArtistsArgs.limit}&offset=${getArtistsArgs.offset}`,
+      `${Path.artist}?limit=${getArtistsArgs.limit}&offset=${
+        getArtistsArgs.offset
+      }&${stringify(getArtistsArgs.filter)}`,
     );
     return Promise.all(
       data.data.items.map(async (item) => {

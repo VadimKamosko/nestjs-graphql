@@ -1,5 +1,5 @@
 import { ArgsType, Field, Int } from '@nestjs/graphql';
-import { IsArray } from 'class-validator';
+import { CreateArtistInput } from '../input/create-artist.input';
 
 @ArgsType()
 export class GetArtistsArgs {
@@ -7,4 +7,6 @@ export class GetArtistsArgs {
   offset: number;
   @Field(() => Int, { nullable: true, defaultValue: 5 })
   limit: number;
+  @Field(() => CreateArtistInput, { nullable: true, defaultValue: null })
+  filter: CreateArtistInput;
 }

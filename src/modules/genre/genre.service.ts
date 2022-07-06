@@ -8,7 +8,7 @@ import { DeleteGenreInput } from './input/delete-genreinput';
 import { AxiosResponse } from 'axios';
 import { HttpService } from '@nestjs/axios';
 import { Path } from 'src/urls/urls';
-import { Context } from '@nestjs/graphql';
+import { stringify } from 'qs';
 
 @Injectable()
 export class GenreService {
@@ -33,8 +33,8 @@ export class GenreService {
     updateGenre: UpdateGenreInput,
     token: string,
   ): Promise<Genre> {
-     if (!token) throw new ForbiddenException();
-    
+    if (!token) throw new ForbiddenException();
+
     const data = await this.httpService.axiosRef.put(
       Path.genre + updateGenre.id,
       updateGenre,
@@ -59,10 +59,12 @@ export class GenreService {
   public async getGenres(
     getGenretArg: GetGenresArg,
   ): Promise<AxiosResponse<Genre[]>> {
-    const offset = getGenretArg.offset || 0;
-    const limit = getGenretArg.limit || 5;
+    console.log(getGenretArg.filter);
+
     const data = await this.httpService.axiosRef.get(
-      `${Path.genre}?limit=${limit}&offset=${offset}`,
+      `${Path.genre}?limit=${getGenretArg.limit}&offset=${
+        getGenretArg.offset
+      }&${stringify(getGenretArg.filter)}`,
     );
 
     return data.data.items.map((item) => {

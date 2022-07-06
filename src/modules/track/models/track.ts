@@ -9,24 +9,24 @@ export class Track {
   @Field()
   id: string;
 
-  @Field({nullable:true})
+  @Field({ nullable: true })
   title: string;
 
-  @Field({nullable:true})
+  @Field({ nullable: true })
   albums: Album;
 
-  @Field(() => [Band],{nullable:true})
+  @Field(() => [Band], { nullable: true })
   bands: Band[];
 
   @Field(() => [Artist], { nullable: true })
   artists: Artist[];
 
-  @Field(()=>Int)
+  @Field(() => Int, { nullable: true })
   duration: number;
 
-  @Field(()=>Int)
+  @Field(() => Int, { nullable: true })
   released: number;
 
-  @Field(() => [Genre],{nullable:"items"})
+  @Field(() => [Genre], { nullable: 'items' })
   genres: Genre[];
 }

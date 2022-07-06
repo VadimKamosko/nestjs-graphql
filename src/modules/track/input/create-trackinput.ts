@@ -14,12 +14,12 @@ export class CreateTrackInput {
   @Field(() => [String], { nullable: true })
   artists: string[];
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   duration: number;
 
-  @Field(() => Int)
+  @Field(() => Int, { nullable: true })
   released: number;
 
-  @Field(() => [String],{nullable:true})
+  @Field(() => [String], { nullable: true })
   genres: string[];
 }

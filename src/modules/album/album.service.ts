@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { stringify } from 'qs';
 import { ReferenceService } from 'src/reference/reference.service';
 import { Path } from 'src/urls/urls';
 import { GetAlbumsArgs } from './DTO/get-albumsdto';
@@ -25,7 +26,9 @@ export class AlbumService {
 
   async getAlbums(albums: GetAlbumsArgs): Promise<Album[]> {
     const data = await this.httpServise.axiosRef.get(
-      `${Path.album}?limit=${albums.limit}&offset=${albums.offset}`,
+      `${Path.album}?limit=${albums.limit}&offset=${albums.offset}&${stringify(
+        albums.filter,
+      )}`,
     );
     const ans = await Promise.all(
       data.data.items.map(async (item) => {

@@ -8,6 +8,7 @@ import { DeleteTrackInput } from './input/delete-trackinput';
 import { HttpService } from '@nestjs/axios';
 import { Path } from 'src/urls/urls';
 import { ReferenceService } from 'src/reference/reference.service';
+import { stringify } from 'qs';
 
 @Injectable()
 export class TrackService {
@@ -17,9 +18,12 @@ export class TrackService {
     private refSer: ReferenceService,
   ) {}
 
-  async getTrack(id: GetTrackArg): Promise<Track> {
+  async getTrack(id: GetTrackArg, albumId?: string): Promise<Track> {
     const data = await this.httpServise.axiosRef.get(Path.track + id.id);
-
+    if (data.data.albumId == albumId) {
+      data.data.albums = { id: albumId };
+      delete data.data.albumId;
+    }
     if (!data.data) return null;
     const props = await this.refSer.getByids(data.data);
 
@@ -28,7 +32,9 @@ export class TrackService {
 
   async getTracks(tracks: GetTracksArg): Promise<Track[]> {
     const data = await this.httpServise.axiosRef.get(
-      `${Path.track}?limit=${tracks.limit}&offset=${tracks.offset}`,
+      `${Path.track}?limit=${tracks.limit}&offset=${tracks.offset}&${stringify(
+        tracks.filter,
+      )}`,
     );
 
     const ans = await Promise.all(
@@ -89,5 +95,4 @@ export class TrackService {
     );
     return bodyDelTracl;
   }
-
 }

@@ -20,17 +20,6 @@ export class ReferenceService {
   private albService: AlbumService;
   private genreServise: GenreService;
 
-  // constructor(
-  //   @Inject(forwardRef(() => ArtistService))
-  //   private readonly artServ: ArtistService,
-  //   @Inject(forwardRef(() => BandService))
-  //   private readonly bandServise: BandService,
-  //   @Inject(forwardRef(() => TrackService))
-  //   private trackService: TrackService,
-  //   @Inject(forwardRef(() => AlbumService))
-  //   private albService: AlbumService,
-  //   private readonly genreServise: GenreService,
-  // ) {}
   constructor(private moduleRef: ModuleRef) {}
 
   onModuleInit() {
@@ -86,7 +75,7 @@ export class ReferenceService {
       tracks = await Promise.all(
         data.trackIds.map(
           async (i) =>
-            (await this.trackService.getTrack({ id: i })) || {
+            (await this.trackService.getTrack({ id: i }, data._id)) || {
               id: 'not found',
             },
         ),

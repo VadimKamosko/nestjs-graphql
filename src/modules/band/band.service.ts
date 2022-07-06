@@ -1,5 +1,11 @@
 import { HttpService } from '@nestjs/axios';
-import { ForbiddenException, forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
+import { stringify } from 'qs';
 import { ReferenceService } from 'src/reference/reference.service';
 import { Path } from 'src/urls/urls';
 import { GetBandArg } from './DTO/get-bandarg';
@@ -14,10 +20,9 @@ export class BandService {
     private readonly httpService: HttpService,
     @Inject(forwardRef(() => ReferenceService))
     private refSer: ReferenceService,
-
   ) {}
 
-  async createBand(body: CreateInputBand,token:string): Promise<Band> {
+  async createBand(body: CreateInputBand, token: string): Promise<Band> {
     const bandmRen = await this.refSer.renameField(body);
     const data = await this.httpService.axiosRef.post(Path.band, bandmRen, {
       headers: {
@@ -27,7 +32,7 @@ export class BandService {
 
     return this.getBand({ id: data.data._id });
   }
-  async updateBand(body: UpdateInputBand,token:string): Promise<Band> {
+  async updateBand(body: UpdateInputBand, token: string): Promise<Band> {
     if (!process.env.token) throw new ForbiddenException();
     const bandRen = await this.refSer.renameField(body);
 
@@ -52,7 +57,9 @@ export class BandService {
 
   async getBands(getBands): Promise<Band[]> {
     const data = await this.httpService.axiosRef.get(
-      `${Path.band}?limit=${getBands.limit}&offset=${getBands.offset}`,
+      `${Path.band}?limit=${getBands.limit}&offset=${
+        getBands.offset
+      }&${stringify(getBands.filter)}`,
     );
 
     const ans = await Promise.all(
@@ -67,7 +74,10 @@ export class BandService {
     return ans;
   }
 
-  async removeBands(id: DeleteBandInput,token:string): Promise<DeleteBandInput> {
+  async removeBands(
+    id: DeleteBandInput,
+    token: string,
+  ): Promise<DeleteBandInput> {
     const data = await this.httpService.axiosRef.delete(Path.band + id.id, {
       headers: {
         Authorization: `${token}`,

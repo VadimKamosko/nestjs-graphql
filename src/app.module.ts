@@ -10,6 +10,7 @@ import { BandModule } from './modules/band/band.module';
 import { FavouriteModule } from './modules/favourite/favourite.module';
 import { AlbumModule } from './modules/album/album.module';
 import { ReferenceModule } from './reference/reference.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ReferenceModule } from './reference/reference.module';
         return { token };
       },
     }),
+    ConfigModule.forRoot(),
     ArtistModule,
     GenreModule,
     TrackModule,
