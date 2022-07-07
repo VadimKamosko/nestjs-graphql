@@ -71,7 +71,7 @@ export class ReferenceService {
       delete data['genresIds'];
       data.genres = genres;
     }
-    if (data.trackIds && data.trackIds !== null) {
+    if (data.trackIds && data.trackIds !== null) {      
       tracks = await Promise.all(
         data.trackIds.map(
           async (i) =>

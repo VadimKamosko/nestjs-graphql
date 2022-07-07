@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { CreateArtistInput } from './input/create-artist.input';
 import { Artist } from './models/artist';
 import { UpdateArtistinput } from './input/update-artistinput';
@@ -22,6 +27,7 @@ export class ArtistService {
     createArtist: CreateArtistInput,
     token: string,
   ): Promise<Artist> {
+    if (!token) throw new ForbiddenException();
     const renArt = await this.refSer.renameField(createArtist);
 
     const data = await this.httpService.axiosRef.post(Path.artist, renArt, {
@@ -36,6 +42,7 @@ export class ArtistService {
     updateArt: UpdateArtistinput,
     token: string,
   ): Promise<Artist> {
+    if (!token) throw new ForbiddenException();
     const renArt = await this.refSer.renameField(updateArt);
 
     const data = await this.httpService.axiosRef.put(
@@ -75,6 +82,7 @@ export class ArtistService {
     getArtistsArgs: DeleteArtistInput,
     token: string,
   ): Promise<DeleteArtistInput> {
+    if (!token) throw new ForbiddenException();
     const data = await this.httpService.axiosRef.delete(
       Path.artist + getArtistsArgs.id,
       {

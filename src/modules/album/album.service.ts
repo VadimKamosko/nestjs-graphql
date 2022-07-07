@@ -1,8 +1,14 @@
 import { HttpService } from '@nestjs/axios';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  forwardRef,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { stringify } from 'qs';
 import { ReferenceService } from 'src/reference/reference.service';
 import { Path } from 'src/urls/urls';
+import { GetAlbumArgs } from './DTO/get-albumargs';
 import { GetAlbumsArgs } from './DTO/get-albumsdto';
 import { CreateInputAlbum } from './inputs/create-inputmodule';
 import { DeleteAlbumInput } from './inputs/delete-albuminout';
@@ -17,7 +23,7 @@ export class AlbumService {
     private refSer: ReferenceService,
   ) {}
 
-  async getAlbum(id) {
+  async getAlbum(id: GetAlbumArgs) {
     const data = await this.httpServise.axiosRef.get(Path.album + id.id);
     const props = await this.refSer.getByids(data.data);
 
@@ -44,6 +50,7 @@ export class AlbumService {
   }
 
   async createAlbun(album: CreateInputAlbum, token: string): Promise<Album> {
+    if (!token) throw new ForbiddenException();
     const albumRen = await this.refSer.renameField(album);
 
     const data = await this.httpServise.axiosRef.post(Path.album, albumRen, {
@@ -56,6 +63,7 @@ export class AlbumService {
   }
 
   async updateAlbum(album: UpdateInputAlbum, token: string) {
+    if (!token) throw new ForbiddenException();
     const albumRen = await this.refSer.renameField(album);
 
     const data = await this.httpServise.axiosRef.put(
@@ -75,6 +83,7 @@ export class AlbumService {
     id: DeleteAlbumInput,
     token: string,
   ): Promise<DeleteAlbumInput> {
+    if (!token) throw new ForbiddenException();
     const data = await this.httpServise.axiosRef.delete(Path.album + id.id, {
       headers: {
         Authorization: `${token}`,

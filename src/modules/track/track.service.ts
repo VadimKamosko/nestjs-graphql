@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { GetTrackArg } from './DTO/get-trackargs';
 import { GetTracksArg } from './DTO/get-tracksargs';
 import { CreateTrackInput } from './input/create-trackinput';
@@ -55,6 +55,7 @@ export class TrackService {
     bodyTrack: CreateTrackInput,
     token: string,
   ): Promise<Track> {
+    if (!token) throw new ForbiddenException();
     const trackRen = await this.refSer.renameField(bodyTrack);
 
     const data = await this.httpServise.axiosRef.post(Path.track, trackRen, {
@@ -70,6 +71,7 @@ export class TrackService {
     bodyTrack: UpdateTrackInput,
     token: string,
   ): Promise<Track> {
+    if (!token) throw new ForbiddenException();
     const trackRen = await this.refSer.renameField(bodyTrack);
 
     const data = await this.httpServise.axiosRef.put(
@@ -85,6 +87,7 @@ export class TrackService {
     return this.getTrack({ id: bodyTrack.id });
   }
   deleteTrack(bodyDelTracl: DeleteTrackInput, token: string): DeleteTrackInput {
+    if (!token) throw new ForbiddenException();
     const data = this.httpServise.axiosRef.delete(
       Path.track + bodyDelTracl.id,
       {
