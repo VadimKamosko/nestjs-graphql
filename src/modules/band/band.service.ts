@@ -51,7 +51,9 @@ export class BandService {
   }
   async getBand(id: GetBandArg): Promise<Band> {
     const data = await this.httpService.axiosRef.get(Path.band + id.id);
+    if(!data.data) return null
     const props = await this.refSer.getByids(data.data);
+    props.members = await this.refSer.getMember(props.members);
 
     return { ...props };
   }
@@ -66,7 +68,7 @@ export class BandService {
     const ans = await Promise.all(
       data.data.items.map(async (item) => {
         const props = await this.refSer.getByids(item);
-
+        props.members = await this.refSer.getMember(props.members);
         return {
           ...props,
         };

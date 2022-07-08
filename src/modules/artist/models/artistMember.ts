@@ -1,15 +1,13 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class Member {
+export class ArtistMember {
+  @Field(() => String, { nullable: false })
+  id: string;
   @Field({ nullable: true })
   firstName: string;
   @Field({ nullable: true })
   secondName: string;
   @Field({ nullable: true })
   middleName: string;
-  @Field({ nullable: true })
-  instrument: string;
-  @Field(() => [String], { nullable: true })
-  years: string[];
 }

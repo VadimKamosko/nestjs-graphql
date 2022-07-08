@@ -53,7 +53,7 @@ export class GenreService {
     const data = await this.httpService.axiosRef.get(
       Path.genre + getGenretArg.id,
     );
-
+    if(!data.data) return null
     return this.replaceId(data.data);
   }
   public async getGenres(

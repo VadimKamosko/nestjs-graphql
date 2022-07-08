@@ -14,6 +14,7 @@ import { HttpService } from '@nestjs/axios';
 import { Path } from 'src/urls/urls';
 import { ReferenceService } from 'src/reference/reference.service';
 import { stringify } from 'qs';
+import { ArtistMember } from './models/artistMember';
 
 @Injectable()
 export class ArtistService {
@@ -61,6 +62,7 @@ export class ArtistService {
     const data = await this.httpService.axiosRef.get(
       Path.artist + getArtistArg.id,
     );
+    if(!data.data) return null
     const props = await this.refSer.getByids(data.data);
 
     return { ...data.data, ...props };
@@ -93,5 +95,16 @@ export class ArtistService {
     );
 
     return getArtistsArgs;
+  }
+
+  public async getMember(id: GetArtistArgs): Promise<ArtistMember> {
+    const data = await this.httpService.axiosRef.get(Path.artist + id.id);
+
+    return {
+      firstName: data.data.firstName,
+      id: data.data._id,
+      secondName: data.data.secondName,
+      middleName: data.data.middleName,
+    };
   }
 }

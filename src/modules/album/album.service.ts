@@ -25,6 +25,7 @@ export class AlbumService {
 
   async getAlbum(id: GetAlbumArgs) {
     const data = await this.httpServise.axiosRef.get(Path.album + id.id);
+    if(!data.data) return null
     const props = await this.refSer.getByids(data.data);
 
     return { ...props };

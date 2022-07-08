@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { Member } from '../models/member';
+import { InputMember } from './inputmember';
 
 @InputType()
 export class CreateInputBand {
@@ -7,8 +7,8 @@ export class CreateInputBand {
   name: string;
   @Field({ nullable: true })
   origin: string;
-  @Field(() => [Member], { nullable: true })
-  members: Member[];
+  @Field(() => [InputMember], { nullable: true })
+  members: InputMember[];
   @Field({ nullable: true })
   website: string;
   @Field(() => [String], { nullable: true })

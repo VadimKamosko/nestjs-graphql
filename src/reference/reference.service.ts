@@ -6,7 +6,9 @@ import { Album } from 'src/modules/album/models/album';
 import { ArtistService } from 'src/modules/artist/artist.service';
 import { Artist } from 'src/modules/artist/models/artist';
 import { BandService } from 'src/modules/band/band.service';
+import { InputMember } from 'src/modules/band/input/inputmember';
 import { Band } from 'src/modules/band/models/band';
+import { Member } from 'src/modules/band/models/member';
 import { GenreService } from 'src/modules/genre/genre.service';
 import { Genre } from 'src/modules/genre/models/genre';
 import { Track } from 'src/modules/track/models/track';
@@ -71,7 +73,7 @@ export class ReferenceService {
       delete data['genresIds'];
       data.genres = genres;
     }
-    if (data.trackIds && data.trackIds !== null) {      
+    if (data.trackIds && data.trackIds !== null) {
       tracks = await Promise.all(
         data.trackIds.map(
           async (i) =>
@@ -88,11 +90,21 @@ export class ReferenceService {
       delete data['albumId'];
       data.albums = albums;
     }
-
+    
     data.id = data._id;
     delete data['_id'];
 
     return data;
+  }
+  async getMember(members: InputMember[]) {
+    return await Promise.all(
+      members.map(async (item: InputMember) => {      
+        return {
+          ...item,
+          ...(await this.artServ.getMember({ id: item.artist })),
+        };
+      }),
+    );
   }
   async renameField(Obj) {
     if (Obj.genres) {
