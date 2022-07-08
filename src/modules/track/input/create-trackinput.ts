@@ -2,7 +2,7 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 
 @InputType()
 export class CreateTrackInput {
-  @Field({ nullable: true })
+  @Field()
   title: string;
 
   @Field({ nullable: true })

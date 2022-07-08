@@ -1,15 +1,10 @@
-import { forwardRef, Inject } from '@nestjs/common';
 import {
   Query,
   Args,
   Resolver,
   Mutation,
-  ResolveField,
-  Parent,
   Context,
 } from '@nestjs/graphql';
-import { AlbumService } from '../album/album.service';
-import { Album } from '../album/models/album';
 import { GetTrackArg } from './DTO/get-trackargs';
 import { GetTracksArg } from './DTO/get-tracksargs';
 import { CreateTrackInput } from './input/create-trackinput';
@@ -22,8 +17,7 @@ import { TrackService } from './track.service';
 export class TrackResolver {
   constructor(
     private readonly trackServise: TrackService,
-  ) // @Inject(forwardRef(() => AlbumService))
-  // private albService: AlbumService,
+  ) 
   {}
 
   @Query(() => Track, { name: 'track', nullable: true })
@@ -57,9 +51,4 @@ export class TrackResolver {
   ): DeleteTrackInput {
     return this.trackServise.deleteTrack(delTrackId, token.token);
   }
-
-  // @ResolveField(() => Album)
-  // async getArtist(@Parent() track: Track) {
-  //   return this.albService.getAlbum({ id: track.albums });
-  // }
 }

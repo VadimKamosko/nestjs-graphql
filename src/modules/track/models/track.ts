@@ -9,7 +9,7 @@ export class Track {
   @Field()
   id: string;
 
-  @Field({ nullable: true })
+  @Field()
   title: string;
 
   @Field({ nullable: true })

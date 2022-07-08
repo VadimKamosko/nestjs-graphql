@@ -23,6 +23,7 @@ export class BandService {
   ) {}
 
   async createBand(body: CreateInputBand, token: string): Promise<Band> {
+    if (!token) throw new ForbiddenException();
     const bandmRen = await this.refSer.renameField(body);
     const data = await this.httpService.axiosRef.post(Path.band, bandmRen, {
       headers: {
@@ -33,7 +34,7 @@ export class BandService {
     return this.getBand({ id: data.data._id });
   }
   async updateBand(body: UpdateInputBand, token: string): Promise<Band> {
-    if (!process.env.token) throw new ForbiddenException();
+    if (!token) throw new ForbiddenException();
     const bandRen = await this.refSer.renameField(body);
 
     const data = await this.httpService.axiosRef.put(
@@ -78,6 +79,7 @@ export class BandService {
     id: DeleteBandInput,
     token: string,
   ): Promise<DeleteBandInput> {
+    if (!token) throw new ForbiddenException();
     const data = await this.httpService.axiosRef.delete(Path.band + id.id, {
       headers: {
         Authorization: `${token}`,

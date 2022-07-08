@@ -59,8 +59,6 @@ export class GenreService {
   public async getGenres(
     getGenretArg: GetGenresArg,
   ): Promise<AxiosResponse<Genre[]>> {
-    console.log(getGenretArg.filter);
-
     const data = await this.httpService.axiosRef.get(
       `${Path.genre}?limit=${getGenretArg.limit}&offset=${
         getGenretArg.offset

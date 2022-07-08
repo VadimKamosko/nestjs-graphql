@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ReferenceService } from 'src/reference/reference.service';
 import { Path } from 'src/urls/urls';
 import { Favourite } from './models/favourite';
@@ -11,6 +11,7 @@ export class FavouriteService {
     private readonly refService: ReferenceService,
   ) {}
   async getFavs(token: string): Promise<Favourite> {
+    if (!token) throw new ForbiddenException();
     const data = await this.httpService.axiosRef.get(Path.fav, {
       headers: {
         Authorization: `${token}`,
@@ -20,6 +21,7 @@ export class FavouriteService {
     return await this.refService.getByids(this.changeObj(data.data));
   }
   async addTrackToFavourites(track, token: string): Promise<Favourite> {
+    if (!token) throw new ForbiddenException();
     const data = await this.httpService.axiosRef.put(
       Path.fav + 'add',
       { id: track.tracks, type: 'tracks' },
@@ -33,6 +35,7 @@ export class FavouriteService {
     return await this.refService.getByids(this.changeObj(data.data));
   }
   async addBandToFavourites(band, token: string): Promise<Favourite> {
+    if (!token) throw new ForbiddenException();
     const data = await this.httpService.axiosRef.put(
       Path.fav + 'add',
       { id: band.bands, type: 'bands' },
@@ -46,6 +49,7 @@ export class FavouriteService {
     return await this.refService.getByids(this.changeObj(data.data));
   }
   async addArtistToFavourites(artist, token: string): Promise<Favourite> {
+    if (!token) throw new ForbiddenException();
     const data = await this.httpService.axiosRef.put(
       Path.fav + 'add',
       { id: artist.artists, type: 'artists' },
@@ -60,6 +64,7 @@ export class FavouriteService {
   }
 
   async addGenreToFavourites(genre, token: string): Promise<Favourite> {
+    if (!token) throw new ForbiddenException();
     const data = await this.httpService.axiosRef.put(
       Path.fav + 'add',
       { id: genre.genres, type: 'genres' },
