@@ -5,7 +5,7 @@ export class UpdateInputAlbum {
   @Field()
   id: string;
   @Field({ nullable: true })
-  name: String;
+  name: string;
   @Field(() => Int, { nullable: true })
   released: number;
   @Field(() => [String], { nullable: true })
@@ -17,5 +17,5 @@ export class UpdateInputAlbum {
   @Field(() => [String], { nullable: true })
   genres: string[];
   @Field({ nullable: true })
-  image: String;
+  image: string;
 }

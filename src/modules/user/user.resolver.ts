@@ -14,7 +14,7 @@ export class UserResolver {
     return this.userSer.createUser(bodyUser);
   }
   @Query(() => String, { name: 'JWT', nullable: true })
-  getJWT(@Args() bodyLog: GetJWT): Promise<AxiosResponse<String>> {
+  getJWT(@Args() bodyLog: GetJWT): Promise<AxiosResponse<string>> {
     return this.userSer.getJWT(bodyLog);
   }
 }

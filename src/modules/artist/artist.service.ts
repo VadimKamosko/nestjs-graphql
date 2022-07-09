@@ -3,6 +3,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateArtistInput } from './input/create-artist.input';
 import { Artist } from './models/artist';
@@ -55,14 +56,14 @@ export class ArtistService {
         },
       },
     );
-
+    if (!data.data) throw new NotFoundException();
     return this.getArtist({ id: data.data._id });
   }
   public async getArtist(getArtistArg: GetArtistArgs): Promise<Artist> {
     const data = await this.httpService.axiosRef.get(
       Path.artist + getArtistArg.id,
     );
-    if(!data.data) return null
+    if (!data.data) return null;
     const props = await this.refSer.getByids(data.data);
 
     return { ...data.data, ...props };
@@ -85,14 +86,11 @@ export class ArtistService {
     token: string,
   ): Promise<DeleteArtistInput> {
     if (!token) throw new ForbiddenException();
-    const data = await this.httpService.axiosRef.delete(
-      Path.artist + getArtistsArgs.id,
-      {
-        headers: {
-          Authorization: `${token}`,
-        },
+    await this.httpService.axiosRef.delete(Path.artist + getArtistsArgs.id, {
+      headers: {
+        Authorization: `${token}`,
       },
-    );
+    });
 
     return getArtistsArgs;
   }

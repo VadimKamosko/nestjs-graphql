@@ -1,10 +1,4 @@
-import {
-  Query,
-  Args,
-  Resolver,
-  Mutation,
-  Context,
-} from '@nestjs/graphql';
+import { Query, Args, Resolver, Mutation, Context } from '@nestjs/graphql';
 import { GetTrackArg } from './DTO/get-trackargs';
 import { GetTracksArg } from './DTO/get-tracksargs';
 import { CreateTrackInput } from './input/create-trackinput';
@@ -13,12 +7,9 @@ import { UpdateTrackInput } from './input/update-trackinput';
 import { Track } from './models/track';
 import { TrackService } from './track.service';
 
-@Resolver((of) => Track)
+@Resolver()
 export class TrackResolver {
-  constructor(
-    private readonly trackServise: TrackService,
-  ) 
-  {}
+  constructor(private readonly trackServise: TrackService) {}
 
   @Query(() => Track, { name: 'track', nullable: true })
   getTrack(@Args() trackid: GetTrackArg): Promise<Track> {

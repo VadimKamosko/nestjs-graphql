@@ -4,6 +4,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { stringify } from 'qs';
 import { ReferenceService } from 'src/reference/reference.service';
@@ -46,12 +47,12 @@ export class BandService {
         },
       },
     );
-
+    if (!data.data) throw new NotFoundException();
     return this.getBand({ id: data.data._id });
   }
   async getBand(id: GetBandArg): Promise<Band> {
     const data = await this.httpService.axiosRef.get(Path.band + id.id);
-    if(!data.data) return null
+    if (!data.data) return null;
     const props = await this.refSer.getByids(data.data);
     props.members = await this.refSer.getMember(props.members);
 
@@ -82,7 +83,7 @@ export class BandService {
     token: string,
   ): Promise<DeleteBandInput> {
     if (!token) throw new ForbiddenException();
-    const data = await this.httpService.axiosRef.delete(Path.band + id.id, {
+    await this.httpService.axiosRef.delete(Path.band + id.id, {
       headers: {
         Authorization: `${token}`,
       },

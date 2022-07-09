@@ -3,7 +3,7 @@ import { Field, InputType, Int } from '@nestjs/graphql';
 @InputType()
 export class CreateInputAlbum {
   @Field({ nullable: true })
-  name: String;
+  name: string;
   @Field(() => Int, { nullable: true })
   released: number;
   @Field(() => [String], { nullable: true })
@@ -15,5 +15,5 @@ export class CreateInputAlbum {
   @Field(() => [String], { nullable: true })
   genres: string[];
   @Field({ nullable: true })
-  image: String;
+  image: string;
 }

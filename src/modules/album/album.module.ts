@@ -6,11 +6,7 @@ import { ReferenceService } from 'src/reference/reference.service';
 
 @Module({
   imports: [HttpModule],
-  providers: [
-    AlbumService,
-    AlbumResolver,
-    ReferenceService,
-  ],
+  providers: [AlbumService, AlbumResolver, ReferenceService],
   exports: [AlbumService],
 })
 export class AlbumModule {}

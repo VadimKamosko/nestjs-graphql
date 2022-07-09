@@ -3,18 +3,18 @@ import { IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class UpdateGenreInput {
-    @Field()
-    @IsNotEmpty()
-    id: string;
-    @Field({ nullable: true })
-    name: string;
-  
-    @Field({ nullable: true })
-    description: string;
-  
-    @Field({ nullable: true })
-    country: string;
-  
-    @Field(() => Int, { nullable: true })
-    year: number;
+  @Field()
+  @IsNotEmpty()
+  id: string;
+  @Field({ nullable: true })
+  name: string;
+
+  @Field({ nullable: true })
+  description: string;
+
+  @Field({ nullable: true })
+  country: string;
+
+  @Field(() => Int, { nullable: true })
+  year: number;
 }

@@ -13,10 +13,6 @@ import { ArtistService } from './artist.service';
       }),
     }),
   ],
-  providers: [
-    ArtistResolver,
-    ArtistService,
-    ReferenceService,
-  ],
+  providers: [ArtistResolver, ArtistService, ReferenceService],
 })
 export class ArtistModule {}

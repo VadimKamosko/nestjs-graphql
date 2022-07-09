@@ -1,13 +1,13 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Band } from 'src/modules/band/models/band';
 
 @ObjectType('Artist')
 export class Artist {
   @Field(() => String, { nullable: false })
   id: string;
-  @Field({ nullable: true })
+  @Field()
   firstName: string;
-  @Field({ nullable: true })
+  @Field()
   secondName: string;
   @Field({ nullable: true })
   middleName: string;

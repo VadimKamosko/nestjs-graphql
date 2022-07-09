@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { TrackResolver } from './track.resolver';
 import { HttpModule } from '@nestjs/axios';
@@ -13,10 +13,6 @@ import { ReferenceService } from 'src/reference/reference.service';
       }),
     }),
   ],
-  providers: [
-    TrackService,
-    TrackResolver,
-    ReferenceService,
-  ],
+  providers: [TrackService, TrackResolver, ReferenceService],
 })
 export class TrackModule {}

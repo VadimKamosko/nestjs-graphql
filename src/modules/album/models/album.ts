@@ -9,7 +9,7 @@ export class Album {
   @Field()
   id: string;
   @Field({ nullable: true })
-  name: String;
+  name: string;
   @Field(() => Int, { nullable: true })
   released: number;
   @Field(() => [Artist], { nullable: true })
@@ -20,6 +20,6 @@ export class Album {
   tracks: Track[];
   @Field(() => [Genre], { nullable: true })
   genres: Genre[];
-  @Field({nullable:true})
-  image: String;
+  @Field({ nullable: true })
+  image: string;
 }

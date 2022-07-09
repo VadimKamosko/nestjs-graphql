@@ -14,16 +14,16 @@ export class UserService {
       'http://localhost:3004/v1/users/register',
       bodyUser,
     );
-    data.data.id = data.data._id
-    delete data.data._id
+    data.data.id = data.data._id;
+    delete data.data._id;
     return data.data;
   }
-  async getJWT(bodyLog: GetJWT): Promise<AxiosResponse<String>> {
+  async getJWT(bodyLog: GetJWT): Promise<AxiosResponse<string>> {
     const data = await this.httpService.axiosRef.post(
       'http://localhost:3004/v1/users/login',
       bodyLog,
     );
-    process.env.token = data.data.jwt;    
+    process.env.token = data.data.jwt;
     return data.data.jwt;
   }
 }

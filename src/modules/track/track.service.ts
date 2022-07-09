@@ -1,4 +1,10 @@
-import { ForbiddenException, forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GetTrackArg } from './DTO/get-trackargs';
 import { GetTracksArg } from './DTO/get-tracksargs';
 import { CreateTrackInput } from './input/create-trackinput';
@@ -20,7 +26,7 @@ export class TrackService {
 
   async getTrack(id: GetTrackArg, albumId?: string): Promise<Track> {
     const data = await this.httpServise.axiosRef.get(Path.track + id.id);
-    if (data.data.albumId == albumId) {
+    if (albumId && data.data.albumId === albumId) {
       data.data.albums = { id: albumId };
       delete data.data.albumId;
     }
@@ -83,19 +89,16 @@ export class TrackService {
         },
       },
     );
-
+    if (!data.data) throw new NotFoundException();
     return this.getTrack({ id: bodyTrack.id });
   }
   deleteTrack(bodyDelTracl: DeleteTrackInput, token: string): DeleteTrackInput {
     if (!token) throw new ForbiddenException();
-    const data = this.httpServise.axiosRef.delete(
-      Path.track + bodyDelTracl.id,
-      {
-        headers: {
-          Authorization: `${token}`,
-        },
+    this.httpServise.axiosRef.delete(Path.track + bodyDelTracl.id, {
+      headers: {
+        Authorization: `${token}`,
       },
-    );
+    });
     return bodyDelTracl;
   }
 }

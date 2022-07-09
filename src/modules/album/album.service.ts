@@ -4,6 +4,7 @@ import {
   forwardRef,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { stringify } from 'qs';
 import { ReferenceService } from 'src/reference/reference.service';
@@ -25,7 +26,7 @@ export class AlbumService {
 
   async getAlbum(id: GetAlbumArgs) {
     const data = await this.httpServise.axiosRef.get(Path.album + id.id);
-    if(!data.data) return null
+    if (!data.data) return null;
     const props = await this.refSer.getByids(data.data);
 
     return { ...props };
@@ -76,7 +77,7 @@ export class AlbumService {
         },
       },
     );
-
+    if (!data.data) throw new NotFoundException();
     return this.getAlbum({ id: data.data._id });
   }
 
@@ -85,7 +86,7 @@ export class AlbumService {
     token: string,
   ): Promise<DeleteAlbumInput> {
     if (!token) throw new ForbiddenException();
-    const data = await this.httpServise.axiosRef.delete(Path.album + id.id, {
+    await this.httpServise.axiosRef.delete(Path.album + id.id, {
       headers: {
         Authorization: `${token}`,
       },

@@ -1,18 +1,12 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
 
 @InputType()
-export class UpdateTrackInput {
-  @Field()
-  id: string;
-
+export class SearchTrack {
   @Field({ nullable: true })
   title: string;
 
   @Field({ nullable: true })
   albums: string;
-
-  @Field(() => [String], { nullable: true })
-  artists: string[];
 
   @Field(() => [String], { nullable: true })
   bands: string[];
@@ -22,7 +16,4 @@ export class UpdateTrackInput {
 
   @Field(() => Int, { nullable: true })
   released: number;
-
-  @Field(() => [String], { nullable: true })
-  genres: string[];
 }

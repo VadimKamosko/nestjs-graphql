@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Genre } from './models/genre';
 import { CreateGenreInput } from './input/create-genre.input';
 import { UpdateGenreInput } from './input/update-genreinput';
@@ -44,7 +48,7 @@ export class GenreService {
         },
       },
     );
-
+    if (!data.data) throw new NotFoundException();
     return this.replaceId(data.data);
   }
   public async getGenre(
@@ -53,7 +57,7 @@ export class GenreService {
     const data = await this.httpService.axiosRef.get(
       Path.genre + getGenretArg.id,
     );
-    if(!data.data) return null
+    if (!data.data) return null;
     return this.replaceId(data.data);
   }
   public async getGenres(
@@ -76,14 +80,11 @@ export class GenreService {
     token: string,
   ): Promise<DeleteGenreInput> {
     if (!token) throw new ForbiddenException();
-    const data = await this.httpService.axiosRef.delete(
-      Path.genre + getGenretArg.id,
-      {
-        headers: {
-          Authorization: `${token}`,
-        },
+    await this.httpService.axiosRef.delete(Path.genre + getGenretArg.id, {
+      headers: {
+        Authorization: `${token}`,
       },
-    );
+    });
 
     return getGenretArg;
   }

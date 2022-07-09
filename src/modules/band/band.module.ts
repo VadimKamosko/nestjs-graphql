@@ -6,6 +6,6 @@ import { ReferenceService } from 'src/reference/reference.service';
 
 @Module({
   imports: [HttpModule],
-  providers: [BandService, BandResolver,ReferenceService],
+  providers: [BandService, BandResolver, ReferenceService],
 })
 export class BandModule {}

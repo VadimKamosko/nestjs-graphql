@@ -7,14 +7,15 @@ import { GenreService } from 'src/modules/genre/genre.service';
 import { TrackService } from 'src/modules/track/track.service';
 import { ReferenceService } from './reference.service';
 
-
 @Module({
   imports: [HttpModule],
-  providers: [ReferenceService,
+  providers: [
+    ReferenceService,
     AlbumService,
     ArtistService,
     BandService,
     GenreService,
-    TrackService,]
+    TrackService,
+  ],
 })
 export class ReferenceModule {}

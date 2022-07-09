@@ -1,10 +1,9 @@
-import { ArgsType, Field } from "@nestjs/graphql";
-import { IsNotEmpty } from "class-validator";
+import { ArgsType, Field } from '@nestjs/graphql';
+import { IsNotEmpty } from 'class-validator';
 
 @ArgsType()
-export class GetAlbumArgs{
-    @Field()
-    @IsNotEmpty()
-    id:string
-
+export class GetAlbumArgs {
+  @Field()
+  @IsNotEmpty()
+  id: string;
 }

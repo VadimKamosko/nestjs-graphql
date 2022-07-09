@@ -1,5 +1,4 @@
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ArtistModule } from './modules/artist/artist.module';

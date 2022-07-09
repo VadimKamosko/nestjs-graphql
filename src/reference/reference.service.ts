@@ -1,5 +1,4 @@
-import { HttpService } from '@nestjs/axios';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { AlbumService } from 'src/modules/album/album.service';
 import { Album } from 'src/modules/album/models/album';
@@ -8,7 +7,6 @@ import { Artist } from 'src/modules/artist/models/artist';
 import { BandService } from 'src/modules/band/band.service';
 import { InputMember } from 'src/modules/band/input/inputmember';
 import { Band } from 'src/modules/band/models/band';
-import { Member } from 'src/modules/band/models/member';
 import { GenreService } from 'src/modules/genre/genre.service';
 import { Genre } from 'src/modules/genre/models/genre';
 import { Track } from 'src/modules/track/models/track';
@@ -90,7 +88,7 @@ export class ReferenceService {
       delete data['albumId'];
       data.albums = albums;
     }
-    
+
     data.id = data._id;
     delete data['_id'];
 
@@ -98,7 +96,7 @@ export class ReferenceService {
   }
   async getMember(members: InputMember[]) {
     return await Promise.all(
-      members.map(async (item: InputMember) => {      
+      members.map(async (item: InputMember) => {
         return {
           ...item,
           ...(await this.artServ.getMember({ id: item.artist })),
@@ -115,7 +113,7 @@ export class ReferenceService {
       Obj['bandsIds'] = Obj.bands;
       delete Obj['bands'];
     }
-    if (Obj.bands) {
+    if (Obj.tracks) {
       Obj['trackIds'] = Obj.tracks;
       delete Obj['tracks'];
     }
