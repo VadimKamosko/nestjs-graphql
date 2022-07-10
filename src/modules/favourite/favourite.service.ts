@@ -17,7 +17,7 @@ export class FavouriteService {
         Authorization: `${token}`,
       },
     });
-
+    if (!data.data) return null;
     return await this.refService.getByids(this.changeObj(data.data));
   }
   async addTrackToFavourites(track, token: string): Promise<Favourite> {
