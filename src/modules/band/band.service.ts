@@ -1,64 +1,93 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { stringify } from 'qs';
+import { ReferenceService } from 'src/reference/reference.service';
+import { Path } from 'src/urls/urls';
 import { GetBandArg } from './DTO/get-bandarg';
-import { CreateInputBand } from './imput/create-bandinput';
-import { DeleteBandInput } from './imput/delete-bandinput';
-import { UpdateInputBand } from './imput/update-bandinput';
+import { CreateInputBand } from './input/create-bandinput';
+import { DeleteBandInput } from './input/delete-bandinput';
+import { UpdateInputBand } from './input/update-bandinput';
 import { Band } from './models/band';
 
 @Injectable()
 export class BandService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    @Inject(forwardRef(() => ReferenceService))
+    private refSer: ReferenceService,
+  ) {}
 
-  async createBand(body: CreateInputBand): Promise<Band> {
-    const data = await this.httpService.axiosRef.post(
-      'http://localhost:3003/v1/bands',
-      body,
-      {
-        headers: {
-          Authorization: `Token ${process.env.token}`,
-        },
+  async createBand(body: CreateInputBand, token: string): Promise<Band> {
+    if (!token) throw new ForbiddenException();
+    const bandmRen = await this.refSer.renameField(body);
+    const data = await this.httpService.axiosRef.post(Path.band, bandmRen, {
+      headers: {
+        Authorization: `${token}`,
       },
-    );
-    return data.data;
+    });
+
+    return this.getBand({ id: data.data._id });
   }
-  async updateBand(body: UpdateInputBand): Promise<Band> {
+  async updateBand(body: UpdateInputBand, token: string): Promise<Band> {
+    if (!token) throw new ForbiddenException();
+    const bandRen = await this.refSer.renameField(body);
+
     const data = await this.httpService.axiosRef.put(
-      'http://localhost:3003/v1/bands/' + body._id,
-      body,
+      Path.band + body.id,
+      bandRen,
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
-    return data.data;
+    if (!data.data) throw new NotFoundException();
+    return this.getBand({ id: data.data._id });
   }
   async getBand(id: GetBandArg): Promise<Band> {
-    const data = await this.httpService.axiosRef.get(
-      'http://localhost:3003/v1/bands/'+id._id,
-    );
+    const data = await this.httpService.axiosRef.get(Path.band + id.id);
+    if (!data.data) return null;
+    const props = await this.refSer.getByids(data.data);
+    props.members = await this.refSer.getMember(props.members);
 
-    return data.data;
+    return { ...props };
   }
 
-  async getBands(): Promise<Band[]> {
+  async getBands(getBands): Promise<Band[]> {
     const data = await this.httpService.axiosRef.get(
-      'http://localhost:3003/v1/bands',
+      `${Path.band}?limit=${getBands.limit}&offset=${
+        getBands.offset
+      }&${stringify(getBands.filter)}`,
     );
 
-    return data.data.items;
+    const ans = await Promise.all(
+      data.data.items.map(async (item) => {
+        const props = await this.refSer.getByids(item);
+        props.members = await this.refSer.getMember(props.members);
+        return {
+          ...props,
+        };
+      }),
+    );
+    return ans;
   }
 
-  async removeBands(id: DeleteBandInput): Promise<DeleteBandInput> {
-    const data = await this.httpService.axiosRef.delete(
-      'http://localhost:3003/v1/bands/' + id._id,
-      {
-        headers: {
-          Authorization: `Token ${process.env.token}`,
-        },
+  async removeBands(
+    id: DeleteBandInput,
+    token: string,
+  ): Promise<DeleteBandInput> {
+    if (!token) throw new ForbiddenException();
+    await this.httpService.axiosRef.delete(Path.band + id.id, {
+      headers: {
+        Authorization: `${token}`,
       },
-    );
+    });
     return id;
   }
 }

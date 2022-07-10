@@ -1,28 +1,28 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
-import { UpdateInputBand } from 'src/modules/band/imput/update-bandinput';
-import { UpdateGenreInput } from 'src/modules/genre/input/update-genreinput';
-
 
 @InputType()
 export class UpdateTrackInput {
   @Field()
-  _id: string;
+  id: string;
 
-  @Field({nullable:true})
+  @Field({ nullable: true })
   title: string;
 
-  @Field({nullable:true})
-  albumId: string;
+  @Field({ nullable: true })
+  albums: string;
 
-  @Field(() => [UpdateInputBand],{nullable:true})
-  bands: UpdateInputBand[];
+  @Field(() => [String], { nullable: true })
+  artists: string[];
 
-  @Field(()=>Int,{nullable:true})
+  @Field(() => [String], { nullable: true })
+  bands: string[];
+
+  @Field(() => Int, { nullable: true })
   duration: number;
 
-  @Field(()=>Int,{nullable:true})
+  @Field(() => Int, { nullable: true })
   released: number;
 
-  @Field(() => [UpdateGenreInput],{nullable:true})
-  genre: UpdateGenreInput[];
+  @Field(() => [String], { nullable: true })
+  genres: string[];
 }

@@ -1,78 +1,108 @@
-import { Injectable } from '@nestjs/common';
-import { CreateArtistInput } from './imput/create-artist.input';
+import {
+  ForbiddenException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateArtistInput } from './input/create-artist.input';
 import { Artist } from './models/artist';
-import { UpdateArtistinput } from './imput/update-artistinput';
+import { UpdateArtistinput } from './input/update-artistinput';
 import { GetArtistArgs } from './DTO/get-artist.args';
 import { GetArtistsArgs } from './DTO/get-artists.args';
-import { DeleteArtistInput } from './imput/delete-artistinput';
+import { DeleteArtistInput } from './input/delete-artistinput';
 import { HttpService } from '@nestjs/axios';
-import { AxiosResponse } from 'axios';
+import { Path } from 'src/urls/urls';
+import { ReferenceService } from 'src/reference/reference.service';
+import { stringify } from 'qs';
+import { ArtistMember } from './models/artistMember';
 
 @Injectable()
 export class ArtistService {
-  constructor(private readonly httpService: HttpService) {}
-
+  constructor(
+    private readonly httpService: HttpService,
+    @Inject(forwardRef(() => ReferenceService))
+    private refSer: ReferenceService,
+  ) {}
 
   public async createArtist(
     createArtist: CreateArtistInput,
-  ): Promise<AxiosResponse<Artist>> {
-    const data = await this.httpService.axiosRef.post(
-      'http://localhost:3002/v1/artists',
-      createArtist,
-      {
-        headers: {
-          Authorization: `Token ${process.env.token}`,
-        },
-      },
-    );
+    token: string,
+  ): Promise<Artist> {
+    if (!token) throw new ForbiddenException();
+    const renArt = await this.refSer.renameField(createArtist);
 
-    return data.data;
+    const data = await this.httpService.axiosRef.post(Path.artist, renArt, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
+
+    return this.getArtist({ id: data.data._id });
   }
   public async updateArtist(
     updateArt: UpdateArtistinput,
-  ): Promise<AxiosResponse<Artist>> {
+    token: string,
+  ): Promise<Artist> {
+    if (!token) throw new ForbiddenException();
+    const renArt = await this.refSer.renameField(updateArt);
+
     const data = await this.httpService.axiosRef.put(
-      'http://localhost:3002/v1/artists/' + updateArt._id,
-      updateArt,
+      Path.artist + updateArt.id,
+      renArt,
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
-
-    return data.data;
+    if (!data.data) throw new NotFoundException();
+    return this.getArtist({ id: data.data._id });
   }
-  public async getArtist(
-    getArtistArg: GetArtistArgs,
-  ): Promise<AxiosResponse<Artist>> {
+  public async getArtist(getArtistArg: GetArtistArgs): Promise<Artist> {
     const data = await this.httpService.axiosRef.get(
-      'http://localhost:3002/v1/artists/' + getArtistArg._id,
+      Path.artist + getArtistArg.id,
     );
+    if (!data.data) return null;
+    const props = await this.refSer.getByids(data.data);
 
-    return data.data;
+    return { ...data.data, ...props };
   }
-  public async getArtists(
-    getArtistsArgs: GetArtistsArgs,
-  ): Promise<AxiosResponse<Artist[]>> {
+  public async getArtists(getArtistsArgs: GetArtistsArgs): Promise<Artist[]> {
     const data = await this.httpService.axiosRef.get(
-      'http://localhost:3002/v1/artists',
+      `${Path.artist}?limit=${getArtistsArgs.limit}&offset=${
+        getArtistsArgs.offset
+      }&${stringify(getArtistsArgs.filter)}`,
     );
-
-    return data.data.items;
+    return Promise.all(
+      data.data.items.map(async (item) => {
+        const props = await this.refSer.getByids(item);
+        return { ...item, ...props };
+      }),
+    );
   }
   public async deleteArist(
     getArtistsArgs: DeleteArtistInput,
+    token: string,
   ): Promise<DeleteArtistInput> {
-    const data = await this.httpService.axiosRef.delete(
-      'http://localhost:3002/v1/artists/' + getArtistsArgs._id,
-      {
-        headers: {
-          Authorization: `Token ${process.env.token}`,
-        },
+    if (!token) throw new ForbiddenException();
+    await this.httpService.axiosRef.delete(Path.artist + getArtistsArgs.id, {
+      headers: {
+        Authorization: `${token}`,
       },
-    );
+    });
 
     return getArtistsArgs;
+  }
+
+  public async getMember(id: GetArtistArgs): Promise<ArtistMember> {
+    const data = await this.httpService.axiosRef.get(Path.artist + id.id);
+
+    return {
+      firstName: data.data.firstName,
+      id: data.data._id,
+      secondName: data.data.secondName,
+      middleName: data.data.middleName,
+    };
   }
 }

@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GetTrackArg } from './DTO/get-trackargs';
 import { GetTracksArg } from './DTO/get-tracksargs';
 import { CreateTrackInput } from './input/create-trackinput';
@@ -6,184 +12,93 @@ import { Track } from './models/track';
 import { UpdateTrackInput } from './input/update-trackinput';
 import { DeleteTrackInput } from './input/delete-trackinput';
 import { HttpService } from '@nestjs/axios';
-import { BandService } from '../band/band.service';
-import { GenreService } from '../genre/genre.service';
-import { Band } from '../band/models/band';
-import { Genre } from '../genre/models/genre';
+import { Path } from 'src/urls/urls';
+import { ReferenceService } from 'src/reference/reference.service';
+import { stringify } from 'qs';
 
 @Injectable()
 export class TrackService {
   constructor(
     private readonly httpServise: HttpService,
-    private readonly bandService: BandService,
-    private readonly genreService: GenreService,
+    @Inject(forwardRef(() => ReferenceService))
+    private refSer: ReferenceService,
   ) {}
-  private tracks: Track[] = [];
 
-  async getTrack(id: GetTrackArg): Promise<Track> {
-    const data = await this.httpServise.axiosRef.get(
-      'http://localhost:3006/v1/tracks/' + id._id,
-    );
-
+  async getTrack(id: GetTrackArg, albumId?: string): Promise<Track> {
+    const data = await this.httpServise.axiosRef.get(Path.track + id.id);
+    if (albumId && data.data.albumId === albumId) {
+      data.data.albums = { id: albumId };
+      delete data.data.albumId;
+    }
     if (!data.data) return null;
-    const genre = await Promise.all(
-      data.data.genresIds.map(async (i) => {
-        if (typeof i === 'string')
-          return (
-            (await this.genreService.getGenre({ _id: i })) || {
-              _id: 'deleted',
-            }
-          );
-        else return [];
-      }),
-    );
+    const props = await this.refSer.getByids(data.data);
 
-    const band = await Promise.all(
-      data.data.bandsIds.map(async (i) => {
-        if (typeof i === 'string')
-          return (
-            (await this.bandService.getBand({ _id: i })) || { _id: 'deleted' }
-          );
-        else return [];
-      }),
-    );
-
-    data.data['genre'] = genre;
-    data.data['bands'] = band;
-
-    return data.data;
+    return { ...data.data, ...props };
   }
 
   async getTracks(tracks: GetTracksArg): Promise<Track[]> {
     const data = await this.httpServise.axiosRef.get(
-      'http://localhost:3006/v1/tracks',
+      `${Path.track}?limit=${tracks.limit}&offset=${tracks.offset}&${stringify(
+        tracks.filter,
+      )}`,
     );
 
-    const ansTrack = await Promise.all(
-      data.data.items.map(async (i) => {
-        const genre = await Promise.all(
-          i.genresIds.map(async (i) => {
-            if (typeof i === 'string')
-              return (
-                (await this.genreService.getGenre({ _id: i })) || {
-                  _id: 'deleted',
-                }
-              );
-            else return {};
-          }),
-        );
+    const ans = await Promise.all(
+      data.data.items.map(async (item) => {
+        const props = await this.refSer.getByids(item);
 
-        const band = await Promise.all(
-          i.bandsIds.map(async (i) => {
-            if (typeof i === 'string')
-              return (
-                (await this.bandService.getBand({ _id: i })) || {
-                  _id: 'deleted',
-                }
-              );
-            else return {};
-          }),
-        );
-        i['genre'] = genre;
-        i['bands'] = band;
-        return i;
+        return {
+          ...item,
+          ...props,
+        };
       }),
     );
 
-    return ansTrack;
+    return ans;
   }
 
-  async createTrack(bodyTrack: CreateTrackInput): Promise<Track> {
-    if (bodyTrack.bands && bodyTrack.bands !== null) {
-      const bandIds = await Promise.all(
-        bodyTrack.bands.map(async (i) => {
-          const band = await this.bandService.createBand(i);
-          return band._id;
-        }),
-      );
-      delete bodyTrack.bands;
-      bodyTrack['bandsIds'] = bandIds;
-    }
-    if (bodyTrack.genre !== null) {
-      const genreIds = await Promise.all(
-        bodyTrack.genre.map(async (i) => {
-          const genre = await this.genreService.createGenre(i);
+  async createTrack(
+    bodyTrack: CreateTrackInput,
+    token: string,
+  ): Promise<Track> {
+    if (!token) throw new ForbiddenException();
+    const trackRen = await this.refSer.renameField(bodyTrack);
 
-          return genre._id;
-        }),
-      );
-      delete bodyTrack.genre;
-      bodyTrack['genresIds'] = genreIds;
-    }
+    const data = await this.httpServise.axiosRef.post(Path.track, trackRen, {
+      headers: {
+        Authorization: `${token}`,
+      },
+    });
 
-    const data = await this.httpServise.axiosRef.post(
-      'http://localhost:3006/v1/tracks',
-      bodyTrack,
+    return this.getTrack({ id: data.data._id });
+  }
+
+  async updateTrack(
+    bodyTrack: UpdateTrackInput,
+    token: string,
+  ): Promise<Track> {
+    if (!token) throw new ForbiddenException();
+    const trackRen = await this.refSer.renameField(bodyTrack);
+
+    const data = await this.httpServise.axiosRef.put(
+      Path.track + bodyTrack.id,
+      trackRen,
       {
         headers: {
-          Authorization: `Token ${process.env.token}`,
+          Authorization: `${token}`,
         },
       },
     );
-
-    const genre = await Promise.all(
-      data.data.genresIds.map(
-        async (i) => await this.genreService.getGenre({ _id: i }),
-      ),
-    );
-
-    const band = await Promise.all(
-      data.data.bandsIds.map(
-        async (i) => await this.bandService.getBand({ _id: i }),
-      ),
-    );
-    data.data['genre'] = genre;
-    data.data['bands'] = band;
-    return data.data;
+    if (!data.data) throw new NotFoundException();
+    return this.getTrack({ id: bodyTrack.id });
   }
-
-  async updateTrack(bodyTrack: UpdateTrackInput):Promise<Track> {
-    let updBand:Band[]
-    let updGenre:Genre[]
-    if (bodyTrack.bands && bodyTrack.bands !== null) {
-       updBand = await Promise.all(
-        bodyTrack.bands.map(async (i) => await this.bandService.updateBand(i)),
-      );
-      delete bodyTrack.bands;
-    }
-    if (bodyTrack.genre && bodyTrack.genre !== null) {
-       updGenre = await Promise.all(
-        bodyTrack.genre.map(
-          async (i) => await this.genreService.updateGenre(i),
-        ),
-      );
-      delete bodyTrack.genre;
-    }
-    const data = this.httpServise.axiosRef.put(
-      'http://localhost:3006/v1/tracks/' + bodyTrack._id,
-      bodyTrack,
-      {
-        headers: {
-          Authorization: `Token ${process.env.token}`,
-        },
+  deleteTrack(bodyDelTracl: DeleteTrackInput, token: string): DeleteTrackInput {
+    if (!token) throw new ForbiddenException();
+    this.httpServise.axiosRef.delete(Path.track + bodyDelTracl.id, {
+      headers: {
+        Authorization: `${token}`,
       },
-    );
-
-    return {
-      ...bodyTrack,
-      genre: updGenre,
-      bands: updBand,
-    };
-  }
-  deleteTrack(bodyDelTracl: DeleteTrackInput): DeleteTrackInput {
-    const data = this.httpServise.axiosRef.delete(
-      'http://localhost:3006/v1/tracks/' + bodyDelTracl._id,
-      {
-        headers: {
-          Authorization: `Token ${process.env.token}`,
-        },
-      },
-    );
+    });
     return bodyDelTracl;
   }
 }

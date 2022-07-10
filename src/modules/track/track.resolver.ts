@@ -1,4 +1,4 @@
-import { Query, Args, Resolver, Mutation } from '@nestjs/graphql';
+import { Query, Args, Resolver, Mutation, Context } from '@nestjs/graphql';
 import { GetTrackArg } from './DTO/get-trackargs';
 import { GetTracksArg } from './DTO/get-tracksargs';
 import { CreateTrackInput } from './input/create-trackinput';
@@ -9,30 +9,37 @@ import { TrackService } from './track.service';
 
 @Resolver()
 export class TrackResolver {
-  constructor(
-    private readonly trackServise: TrackService,
-  ) {}
+  constructor(private readonly trackServise: TrackService) {}
 
   @Query(() => Track, { name: 'track', nullable: true })
-  getTrack(@Args() trackid: GetTrackArg): Promise<Track>  {
+  getTrack(@Args() trackid: GetTrackArg): Promise<Track> {
     return this.trackServise.getTrack(trackid);
   }
 
   @Query(() => [Track], { name: 'tracks', nullable: 'items' })
-  getTracks(@Args() trackids: GetTracksArg):  Promise<Track[]> {
+  getTracks(@Args() trackids: GetTracksArg): Promise<Track[]> {
     return this.trackServise.getTracks(trackids);
   }
 
   @Mutation(() => Track)
-  createTrack(@Args('createTrack') trackbody: CreateTrackInput): Promise<Track> {
-    return this.trackServise.createTrack(trackbody);
+  createTrack(
+    @Args('createTrack') trackbody: CreateTrackInput,
+    @Context() token: any,
+  ): Promise<Track> {
+    return this.trackServise.createTrack(trackbody, token.token);
   }
   @Mutation(() => Track)
-  updateTrack(@Args('updateTrack') trackbody: UpdateTrackInput): Promise<Track> {
-    return this.trackServise.updateTrack(trackbody);
+  updateTrack(
+    @Args('updateTrack') trackbody: UpdateTrackInput,
+    @Context() token: any,
+  ): Promise<Track> {
+    return this.trackServise.updateTrack(trackbody, token.token);
   }
   @Mutation(() => Track)
-  deleteTrack(@Args('deleteTrack') delTrackId: DeleteTrackInput):DeleteTrackInput{
-    return this.trackServise.deleteTrack(delTrackId);
+  deleteTrack(
+    @Args('deleteTrack') delTrackId: DeleteTrackInput,
+    @Context() token: any,
+  ): DeleteTrackInput {
+    return this.trackServise.deleteTrack(delTrackId, token.token);
   }
 }

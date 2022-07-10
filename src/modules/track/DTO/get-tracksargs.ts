@@ -1,9 +1,12 @@
-import { ArgsType, Field } from '@nestjs/graphql';
-import { IsArray } from 'class-validator';
+import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { SearchTrack } from '../input/search-track';
 
 @ArgsType()
 export class GetTracksArg {
-  @Field(() => [String])
-  @IsArray()
-  _id: string[];
+  @Field(() => Int, { nullable: true, defaultValue: 0 })
+  offset: number;
+  @Field(() => Int, { nullable: true, defaultValue: 5 })
+  limit: number;
+  @Field(() => SearchTrack, { nullable: true, defaultValue: null })
+  filter: SearchTrack;
 }

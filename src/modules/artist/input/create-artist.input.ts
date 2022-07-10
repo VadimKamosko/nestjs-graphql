@@ -2,9 +2,9 @@ import { Field, InputType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateArtistInput {
-  @Field({ nullable: true })
+  @Field()
   firstName: string;
-  @Field({ nullable: true })
+  @Field()
   secondName: string;
   @Field({ nullable: true })
   middleName: string;

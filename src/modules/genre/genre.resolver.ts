@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { GetGenreArg } from './DTO/get-genre.args';
 import { GetGenresArg } from './DTO/get-genresargs';
 import { GenreService } from './genre.service';
@@ -10,30 +10,39 @@ import { AxiosResponse } from 'axios';
 
 @Resolver()
 export class GenreResolver {
-    constructor(private readonly genreServise:GenreService){}
+  constructor(private readonly genreServise: GenreService) {}
 
-    @Query(() => Genre, { name: 'genre', nullable: true })
-    getGenre(@Args() genreid: GetGenreArg): Promise<AxiosResponse<Genre>> {
-      return this.genreServise.getGenre(genreid);
-    }
-  
-    @Query(() => [Genre], { name: 'genres', nullable: 'items' })
-    getGenres(@Args()genresid: GetGenresArg): Promise<AxiosResponse<Genre[]>> {
-      return this.genreServise.getGenres(genresid);
-    }
-  
-    @Mutation(()=>Genre)
-    createGenre(@Args(('createGenre'))createGenredate:CreateGenreInput):Promise<Genre>{
-      return this.genreServise.createGenre(createGenredate)
-    }
-  
-    @Mutation(()=>Genre)
-    updateGenre(@Args(('updateGenre'))update:UpdateGenreInput):Promise<Genre>{
-      return this.genreServise.updateGenre(update)
-    }
-  
-    @Mutation(()=>Genre)
-    removeGenre(@Args(('deleteGenre'))deleteId:DeleteGenreInput):Promise<DeleteGenreInput>{
-      return this.genreServise.deleteGenre(deleteId)
-    }
+  @Query(() => Genre, { name: 'genre', nullable: true })
+  getGenre(@Args() genreid: GetGenreArg): Promise<AxiosResponse<Genre>> {
+    return this.genreServise.getGenre(genreid);
+  }
+
+  @Query(() => [Genre], { name: 'genres', nullable: 'items' })
+  getGenres(@Args() genresid: GetGenresArg): Promise<AxiosResponse<Genre[]>> {
+    return this.genreServise.getGenres(genresid);
+  }
+
+  @Mutation(() => Genre)
+  createGenre(
+    @Args('createGenre') createGenredate: CreateGenreInput,
+    @Context() token: any,
+  ): Promise<Genre> {
+    return this.genreServise.createGenre(createGenredate, token.token);
+  }
+
+  @Mutation(() => Genre)
+  updateGenre(
+    @Args('updateGenre') update: UpdateGenreInput,
+    @Context() token: any,
+  ): Promise<Genre> {
+    return this.genreServise.updateGenre(update, token.token);
+  }
+
+  @Mutation(() => Genre)
+  removeGenre(
+    @Args('deleteGenre') deleteId: DeleteGenreInput,
+    @Context() token: any,
+  ): Promise<DeleteGenreInput> {
+    return this.genreServise.deleteGenre(deleteId, token.token);
+  }
 }

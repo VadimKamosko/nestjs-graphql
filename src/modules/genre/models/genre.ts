@@ -5,13 +5,13 @@ import { IsNotEmpty } from 'class-validator';
 export class Genre {
   @Field()
   @IsNotEmpty()
-  _id: string;
+  id: string;
   @Field({ nullable: true })
   name: string;
   @Field({ nullable: true })
   description: string;
   @Field({ nullable: true })
   country: string;
-  @Field(() => Int,{ nullable: true })
+  @Field(() => Int, { nullable: true })
   year: number;
 }

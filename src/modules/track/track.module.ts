@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { TrackResolver } from './track.resolver';
-import { ArtistService } from '../artist/artist.service';
 import { HttpModule } from '@nestjs/axios';
-import { BandService } from '../band/band.service';
-import { GenreService } from '../genre/genre.service';
+import { ReferenceService } from 'src/reference/reference.service';
 
 @Module({
   imports: [
@@ -15,6 +13,6 @@ import { GenreService } from '../genre/genre.service';
       }),
     }),
   ],
-  providers: [TrackService, TrackResolver, ArtistService ,BandService,GenreService],
+  providers: [TrackService, TrackResolver, ReferenceService],
 })
 export class TrackModule {}
